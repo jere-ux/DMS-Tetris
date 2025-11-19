@@ -11,6 +11,7 @@ public class GameController implements InputEventListener {
         board.createNewBrick();
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
+        // Connect score to UI - score label will update automatically
         viewGuiController.bindScore(board.getScore().scoreProperty());
     }
 
@@ -19,18 +20,19 @@ public class GameController implements InputEventListener {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
         if (!canMove) {
+            // Brick landed - merge it to the board
             board.mergeBrickToBackground();
             clearRow = board.clearRows();
+            // Award bonus points for clearing lines
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
             }
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
             }
-
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
-
         } else {
+            // Player manually moved piece down - give 1 point
             if (event.getEventSource() == EventSource.USER) {
                 board.getScore().add(1);
             }
