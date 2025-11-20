@@ -66,12 +66,13 @@ public class GuiController implements Initializable {
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                // Pause/unpause game with P key
+
                 if (keyEvent.getCode() == KeyCode.P && isGameOver.getValue() == Boolean.FALSE) {
                     togglePause();
                     keyEvent.consume();
                 }
 
+                // Movement controls - only work when game is not paused or game is not over
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
@@ -90,12 +91,16 @@ public class GuiController implements Initializable {
                         keyEvent.consume();
                     }
                 }
+                // New game - press N to start a new game (works even when game over)
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
                 }
             }
         });
         gameOverPanel.setVisible(false);
+
+        // Wire up New Game button to newGame() method
+        gameOverPanel.setOnNewGameButtonClick(e -> newGame(e));
 
         // Start score at 0
         if (scoreLabel != null) {
@@ -108,6 +113,7 @@ public class GuiController implements Initializable {
         reflection.setTopOffset(-12);
     }
 
+    // Initializes the game board display and starts the automatic falling animation
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
@@ -132,7 +138,7 @@ public class GuiController implements Initializable {
         brickPanel.setLayoutX(offset.getX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(offset.getY() - 42 + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
-
+        // Game loop - automatically moves bricks down every 400ms
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
@@ -176,7 +182,8 @@ public class GuiController implements Initializable {
     }
 
 
-    private void refreshBrick(ViewData brick) {
+    // Updates the falling brick display on screen
+    public void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
             Point2D offset = getGamePanelOffset();
             brickPanel.setLayoutX(offset.getX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
@@ -203,10 +210,12 @@ public class GuiController implements Initializable {
         rectangle.setArcWidth(9);
     }
 
+    // Moves the current brick down one row (called by timer or player input)
     private void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
             DownData downData = eventListener.onDownEvent(event);
             if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
+                // Show bonus points notification when lines are cleared
                 NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
                 groupNotification.getChildren().add(notificationPanel);
                 notificationPanel.showScore(groupNotification.getChildren());
@@ -220,19 +229,21 @@ public class GuiController implements Initializable {
         this.eventListener = eventListener;
     }
 
-    // Connects the score value to the label - label updates automatically when score changes
+    // Connects the score value to the label - label update
     public void bindScore(IntegerProperty scoreProperty) {
         if (scoreLabel != null && scoreProperty != null) {
             scoreLabel.textProperty().bind(scoreProperty.asString("%d"));
         }
     }
 
+    // Called when game ends - stops animation and shows game over panel
     public void gameOver() {
         timeLine.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
     }
 
+    // Starts a new game - resets board, score, and restarts animation
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         gameOverPanel.setVisible(false);

@@ -63,5 +63,7 @@ public class GameController implements InputEventListener {
     public void createNewGame() {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        // Refresh brick view with new brick after game reset
+        viewGuiController.refreshBrick(board.getViewData());
     }
 }
