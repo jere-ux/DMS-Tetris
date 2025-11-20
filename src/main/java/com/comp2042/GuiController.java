@@ -66,6 +66,12 @@ public class GuiController implements Initializable {
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
+                // Pause/unpause game with P key
+                if (keyEvent.getCode() == KeyCode.P && isGameOver.getValue() == Boolean.FALSE) {
+                    togglePause();
+                    keyEvent.consume();
+                }
+
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
@@ -237,8 +243,24 @@ public class GuiController implements Initializable {
         isGameOver.setValue(Boolean.FALSE);
     }
 
-    public void pauseGame(ActionEvent actionEvent) {
+    // Toggles pause state and stops/resumes game timeline
+    public void togglePause() {
+        if (timeLine != null && !isGameOver.getValue()) {
+            if (isPause.getValue()) {
+                // Resume game
+                isPause.setValue(Boolean.FALSE);
+                timeLine.play();
+            } else {
+                // Pause game
+                isPause.setValue(Boolean.TRUE);
+                timeLine.pause();
+            }
+        }
         gamePanel.requestFocus();
+    }
+
+    public void pauseGame(ActionEvent actionEvent) {
+        togglePause();
     }
 
     private Point2D getGamePanelOffset() {

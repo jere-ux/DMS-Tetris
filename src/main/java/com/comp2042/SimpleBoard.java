@@ -119,6 +119,7 @@ public class SimpleBoard implements Board {
 
 
     @Override
+
     public void newGame() {
         currentGameMatrix = new int[width][height];
         // Reset the score to 0 when starting the new game
