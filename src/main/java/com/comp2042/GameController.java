@@ -13,6 +13,8 @@ public class GameController implements InputEventListener {
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         // Connect score to UI - score label will update automatically
         viewGuiController.bindScore(board.getScore().scoreProperty());
+        // Connect high score to UI - high score label will update automatically
+        viewGuiController.bindHighScore(board.getScore().highScoreProperty());
     }
 
     @Override

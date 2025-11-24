@@ -46,6 +46,10 @@ public class GuiController implements Initializable {
     @FXML
     private Label scoreLabel;
 
+    // Label that displays the high score on screen
+    @FXML
+    private Label highScoreLabel;
+
     private Rectangle[][] displayMatrix;
 
     private InputEventListener eventListener;
@@ -107,6 +111,11 @@ public class GuiController implements Initializable {
             scoreLabel.setText("0");
         }
 
+        // Start high score at 0
+        if (highScoreLabel != null) {
+            highScoreLabel.setText("0");
+        }
+
         final Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
         reflection.setTopOpacity(0.9);
@@ -135,8 +144,8 @@ public class GuiController implements Initializable {
             }
         }
         Point2D offset = getGamePanelOffset();
-        brickPanel.setLayoutX(offset.getX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(offset.getY() - 42 + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+        brickPanel.setTranslateX(offset.getX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+        brickPanel.setTranslateY(offset.getY() - 42 + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
         // Game loop - automatically moves bricks down every 400ms
         timeLine = new Timeline(new KeyFrame(
@@ -186,8 +195,8 @@ public class GuiController implements Initializable {
     public void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
             Point2D offset = getGamePanelOffset();
-            brickPanel.setLayoutX(offset.getX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-            brickPanel.setLayoutY(offset.getY() - 42 + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+            brickPanel.setTranslateX(offset.getX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
+            brickPanel.setTranslateY(offset.getY() - 42 + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
             for (int i = 0; i < brick.getBrickData().length; i++) {
                 for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
@@ -233,6 +242,13 @@ public class GuiController implements Initializable {
     public void bindScore(IntegerProperty scoreProperty) {
         if (scoreLabel != null && scoreProperty != null) {
             scoreLabel.textProperty().bind(scoreProperty.asString("%d"));
+        }
+    }
+
+    // Connects the high score value to the label - label update
+    public void bindHighScore(IntegerProperty highScoreProperty) {
+        if (highScoreLabel != null && highScoreProperty != null) {
+            highScoreLabel.textProperty().bind(highScoreProperty.asString("%d"));
         }
     }
 

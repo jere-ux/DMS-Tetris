@@ -10,11 +10,12 @@
            xmlns:fx="http://javafx.com/fxml"
            alignment="CENTER">
     <Pane prefWidth="340" prefHeight="510" maxWidth="340" maxHeight="510">
-        <VBox alignment="TOP_LEFT" layoutX="270" layoutY="10" spacing="2" prefWidth="70">
-            <Label text="SCORE" styleClass="scoreTitleClass" prefWidth="70"/>
-            <Label fx:id="scoreLabel" text="0" styleClass="scoreClass" prefWidth="70"/>
+        <VBox alignment="TOP_LEFT" layoutX="250" layoutY="10" spacing="2" prefWidth="110">
+        <Label text="SCORE" styleClass="scoreTitleClass" prefWidth="110"/>
+        <Label fx:id="scoreLabel" text="0" styleClass="scoreClass" prefWidth="110"/>
+        <Label text="HIGH SCORE" styleClass="scoreTitleClass" prefWidth="110" wrapText="true"/>
+        <Label fx:id="highScoreLabel" text="0" styleClass="scoreClass" prefWidth="110"/>
         </VBox>
-
         <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
         <BorderPane styleClass="gameBoard" fx:id="gameBoard">
             <center>
