@@ -40,6 +40,15 @@ public class GuiController implements Initializable {
     private GridPane brickPanel;
 
     @FXML
+    private GridPane nextBrickPanel1;
+
+    @FXML
+    private GridPane nextBrickPanel2;
+
+    @FXML
+    private GridPane nextBrickPanel3;
+
+    @FXML
     private GameOverPanel gameOverPanel;
 
     // Label that displays the score on screen
@@ -55,6 +64,10 @@ public class GuiController implements Initializable {
     private InputEventListener eventListener;
 
     private Rectangle[][] rectangles;
+
+    private int[][] storedNextBrickData1;
+    private int[][] storedNextBrickData2;
+    private int[][] storedNextBrickData3;
 
     private Timeline timeLine;
 
@@ -92,10 +105,6 @@ public class GuiController implements Initializable {
                     }
                     if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.SPACE) {
-                        hardDrop();
                         keyEvent.consume();
                     }
                 }
@@ -151,6 +160,8 @@ public class GuiController implements Initializable {
         brickPanel.setTranslateX(offset.getX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setTranslateY(offset.getY() - 42 + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
+        refreshNextBricks(brick.getNextThreeBricks());
+
         // Game loop - automatically moves bricks down every 400ms
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
@@ -195,9 +206,57 @@ public class GuiController implements Initializable {
     }
 
 
+    private void refreshNextBrickPanel(GridPane panel, int[][] nextBrickData, int[][] storedData) {
+        if (panel == null || nextBrickData == null) return;
+
+        // Simple check if data changed
+        boolean changed = false;
+        if (storedData == null || nextBrickData.length != storedData.length || nextBrickData[0].length != storedData[0].length) {
+            changed = true;
+        } else {
+            for (int i = 0; i < nextBrickData.length; i++) {
+                for (int j = 0; j < nextBrickData[i].length; j++) {
+                    if (nextBrickData[i][j] != storedData[i][j]) {
+                        changed = true;
+                        break;
+                    }
+                }
+                if (changed) break;
+            }
+        }
+
+        if (!changed) return;
+
+        panel.getChildren().clear();
+
+        for (int i = 0; i < nextBrickData.length; i++) {
+            for (int j = 0; j < nextBrickData[i].length; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(getFillColor(nextBrickData[i][j]));
+                rectangle.setArcHeight(9);
+                rectangle.setArcWidth(9);
+                panel.add(rectangle, j, i);
+            }
+        }
+    }
+
+    private void refreshNextBricks(java.util.List<int[][]> nextThreeBricks) {
+        if (nextThreeBricks == null || nextThreeBricks.size() < 3) return;
+
+        refreshNextBrickPanel(nextBrickPanel1, nextThreeBricks.get(0), storedNextBrickData1);
+        storedNextBrickData1 = nextThreeBricks.get(0);
+
+        refreshNextBrickPanel(nextBrickPanel2, nextThreeBricks.get(1), storedNextBrickData2);
+        storedNextBrickData2 = nextThreeBricks.get(1);
+
+        refreshNextBrickPanel(nextBrickPanel3, nextThreeBricks.get(2), storedNextBrickData3);
+        storedNextBrickData3 = nextThreeBricks.get(2);
+    }
+
     // Updates the falling brick display on screen
     public void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
+            refreshNextBricks(brick.getNextThreeBricks());
             Point2D offset = getGamePanelOffset();
             brickPanel.setTranslateX(offset.getX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
             brickPanel.setTranslateY(offset.getY() - 42 + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
@@ -237,21 +296,6 @@ public class GuiController implements Initializable {
         }
         gamePanel.requestFocus();
     }
-
-    private void hardDrop() {
-        if (isPause.getValue() == Boolean.FALSE) {
-            DownData downData = eventListener.onHardDropEvent(new MoveEvent(EventType.DOWN, EventSource.USER));
-            if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
-                NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
-                groupNotification.getChildren().add(notificationPanel);
-                notificationPanel.showScore(groupNotification.getChildren());
-            }
-            refreshBrick(downData.getViewData());
-        }
-        gamePanel.requestFocus();
-    }
-
-
 
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;

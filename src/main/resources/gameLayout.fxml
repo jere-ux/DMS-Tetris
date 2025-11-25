@@ -11,10 +11,17 @@
            alignment="CENTER">
     <Pane prefWidth="340" prefHeight="510" maxWidth="340" maxHeight="510">
         <VBox alignment="TOP_LEFT" layoutX="250" layoutY="10" spacing="2" prefWidth="110">
-        <Label text="SCORE" styleClass="scoreTitleClass" prefWidth="110"/>
-        <Label fx:id="scoreLabel" text="0" styleClass="scoreClass" prefWidth="110"/>
-        <Label text="HIGH SCORE" styleClass="scoreTitleClass" prefWidth="110" wrapText="true"/>
-        <Label fx:id="highScoreLabel" text="0" styleClass="scoreClass" prefWidth="110"/>
+            <Label text="SCORE" styleClass="scoreTitleClass" prefWidth="110"/>
+            <Label fx:id="scoreLabel" text="0" styleClass="scoreClass" prefWidth="110"/>
+            <Label text="HIGH SCORE" styleClass="scoreTitleClass" prefWidth="110" wrapText="true"/>
+            <Label fx:id="highScoreLabel" text="0" styleClass="scoreClass" prefWidth="110"/>
+            <Pane styleClass="nextBrick" prefWidth="100" prefHeight="280" maxWidth="100" maxHeight="280">
+                <VBox spacing="15" layoutX="15" layoutY="10">
+                    <GridPane fx:id="nextBrickPanel1" hgap="1" vgap="1"/>
+                    <GridPane fx:id="nextBrickPanel2" hgap="1" vgap="1"/>
+                    <GridPane fx:id="nextBrickPanel3" hgap="1" vgap="1"/>
+                </VBox>
+            </Pane>
         </VBox>
         <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
         <BorderPane styleClass="gameBoard" fx:id="gameBoard">
