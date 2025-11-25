@@ -94,6 +94,10 @@ public class GuiController implements Initializable {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
                     }
+                    if (keyEvent.getCode() == KeyCode.SPACE) {
+                        hardDrop();
+                        keyEvent.consume();
+                    }
                 }
                 // New game - press N to start a new game (works even when game over)
                 if (keyEvent.getCode() == KeyCode.N) {
@@ -233,6 +237,21 @@ public class GuiController implements Initializable {
         }
         gamePanel.requestFocus();
     }
+
+    private void hardDrop() {
+        if (isPause.getValue() == Boolean.FALSE) {
+            DownData downData = eventListener.onHardDropEvent(new MoveEvent(EventType.DOWN, EventSource.USER));
+            if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
+                NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
+                groupNotification.getChildren().add(notificationPanel);
+                notificationPanel.showScore(groupNotification.getChildren());
+            }
+            refreshBrick(downData.getViewData());
+        }
+        gamePanel.requestFocus();
+    }
+
+
 
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
