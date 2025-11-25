@@ -30,6 +30,7 @@ public class GameController implements InputEventListener {
                 board.getScore().add(clearRow.getScoreBonus());
             }
             if (board.createNewBrick()) {
+                board.getScore().updateHighScore();// update highscore when the game finishes
                 viewGuiController.gameOver();
             }
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
@@ -64,6 +65,7 @@ public class GameController implements InputEventListener {
     @Override
     public void createNewGame() {
         board.newGame();
+        board.getScore().reset();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         // Refresh brick view with new brick after game reset
         viewGuiController.refreshBrick(board.getViewData());

@@ -26,11 +26,15 @@ public final class Score {
     public void add(int value) {
         int newScore = score.getValue() + value;
         score.setValue(newScore);
-        // Update high score if current score exceeds it
-        if (newScore > highScore.getValue()) {
-            highScore.setValue(newScore);
+    }
+
+    // Call this when game ends to update high score
+    public void updateHighScore() {
+        if (score.getValue() > highScore.getValue()) {
+            highScore.setValue(score.getValue());
         }
     }
+
 
     // Resets score to 0 for a new game
     public void reset() {
