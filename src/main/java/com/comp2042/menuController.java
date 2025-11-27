@@ -189,6 +189,9 @@ public class menuController {
     public void onSettings(ActionEvent actionEvent) {
     }
 
+    public void onHelp(ActionEvent actionEvent) {
+    }
+
     private static class FallingShape {
         Shape shape;
         double speed;

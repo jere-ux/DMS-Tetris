@@ -26,6 +26,7 @@
                         <Button fx:id="newGameBtn" mnemonicParsing="false" onAction="#onNewGame" styleClass="cyber-button, green-btn" text="NEW GAME" />
                         <Button fx:id="SettingsBtn" mnemonicParsing="false" onAction="#onSettings" styleClass="cyber-button, yellow-btn" text="SETTINGS" />
                         <Button fx:id="quitBtn" mnemonicParsing="false" onAction="#onQuit" styleClass="cyber-button, red-btn" text="QUIT" />
+                        <Button fx:id="HelpBtn" mnemonicParsing="false" onAction="#onHelp" styleClass="cyber-button, blue-btn" text="HELP" />"
                     </children>
                 </VBox>
             </children>
