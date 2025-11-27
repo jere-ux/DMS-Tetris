@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
@@ -188,7 +189,13 @@ public class menuController {
     }
 
     public void onHelp(ActionEvent actionEvent) {
-
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Help");
+        alert.setHeaderText("Instructions");
+        alert.setContentText("Move Brick: Left & Right Arrows\n" +
+                "Speed Up: Down Arrow\n" +
+                "Drop Instantly(Hard drop): Space Bar");
+        alert.showAndWait();
     }
 
     private static class FallingShape {
