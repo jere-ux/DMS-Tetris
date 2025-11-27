@@ -26,6 +26,8 @@ import java.util.Random;
 public class menuController {
 
     public ImageView backgroundImage;
+    public Button HelpBtn;
+    public Button SettingsBtn;
     @FXML private Pane particlePane;
     @FXML private Button newGameBtn;
     @FXML private Button optionsBtn;
@@ -178,18 +180,15 @@ public class menuController {
         this.optionsBtn = optionsBtn;
     }
 
-    public Button getQuitBtn() {
-        return quitBtn;
-    }
 
-    public void setQuitBtn(Button quitBtn) {
-        this.quitBtn = quitBtn;
-    }
+
+
 
     public void onSettings(ActionEvent actionEvent) {
     }
 
     public void onHelp(ActionEvent actionEvent) {
+
     }
 
     private static class FallingShape {
