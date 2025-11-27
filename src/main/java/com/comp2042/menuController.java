@@ -8,11 +8,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
@@ -33,9 +35,12 @@ public class menuController {
     @FXML private Button newGameBtn;
     @FXML private Button optionsBtn;
     @FXML private Button quitBtn;
+    @FXML private VBox mainMenuVBox;
+    @FXML private VBox helpPane;
 
     private final List<FallingShape> shapes = new ArrayList<>();
     private final Random random = new Random();
+    private MediaPlayer mediaPlayer; // For menu music
 
     // Cyberpunk Neon Colors
     private final Color[] NEON_COLORS = {
@@ -49,6 +54,28 @@ public class menuController {
     @FXML
     public void initialize() {
         startBackgroundAnimation();
+        playMenuMusic();
+    }
+
+    // Plays background music on a loop.
+    private void playMenuMusic() {
+        try {
+            String musicFile = "/menu.mp3"; // Music file in resources
+            Media sound = new Media(getClass().getResource(musicFile).toString());
+            mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop music
+            mediaPlayer.play();
+        } catch (Exception e) {
+            System.out.println("Error: Could not play menu music. Make sure 'menu.mp3' is in the resources folder.");
+            e.printStackTrace();
+        }
+    }
+
+    // Stops the menu music.
+    private void stopMenuMusic() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
     }
 
     private void startBackgroundAnimation() {
@@ -133,6 +160,7 @@ public class menuController {
 
     @FXML
     public void onNewGame(ActionEvent event) {
+        stopMenuMusic(); // Stop music before starting game
         try {
             // Load the Game Layout
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gameLayout.fxml"));
@@ -161,6 +189,7 @@ public class menuController {
 
     @FXML
     public void onQuit(ActionEvent event) {
+        stopMenuMusic(); // Stop music before quitting
         Platform.exit();
         System.exit(0);
     }
@@ -188,14 +217,16 @@ public class menuController {
     public void onSettings(ActionEvent actionEvent) {
     }
 
+    @FXML
     public void onHelp(ActionEvent actionEvent) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Help");
-        alert.setHeaderText("Instructions");
-        alert.setContentText("Move Brick: Left & Right Arrows\n" +
-                "Speed Up: Down Arrow\n" +
-                "Drop Instantly(Hard drop): Space Bar");
-        alert.showAndWait();
+        mainMenuVBox.setVisible(false);
+        helpPane.setVisible(true);
+    }
+
+    @FXML
+    public void onHelpBack(ActionEvent actionEvent) {
+        helpPane.setVisible(false);
+        mainMenuVBox.setVisible(true);
     }
 
     private static class FallingShape {
