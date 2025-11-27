@@ -1,0 +1,61 @@
+
+.root {
+    -fx-background-color: #0b0c15;
+}
+
+
+#titleLabel {
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-weight: bold;
+    -fx-font-size: 80px;
+    -fx-text-fill: transparent;
+    -fx-stroke: #00f0ff;
+    -fx-stroke-width: 2px;
+    /* The Cyberpunk Blue Glow */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 240, 255, 0.8), 30, 0.5, 0, 0);
+}
+
+
+.cyber-button {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-radius: 0;
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 10 40 10 40;
+    -fx-border-width: 3px;
+    -fx-border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+
+
+.green-btn {
+    -fx-text-fill: #39ff14;
+    -fx-border-color: #39ff14;
+}
+.green-btn:hover {
+    -fx-background-color: rgba(57, 255, 20, 0.2);
+    -fx-effect: dropshadow(three-pass-box, #39ff14, 20, 0.5, 0, 0);
+}
+
+
+.yellow-btn {
+    -fx-text-fill: #fff01f;
+    -fx-border-color: #fff01f;
+}
+.yellow-btn:hover {
+    -fx-background-color: rgba(255, 240, 31, 0.2);
+    -fx-effect: dropshadow(three-pass-box, #fff01f, 20, 0.5, 0, 0);
+}
+
+
+.red-btn {
+    -fx-text-fill: #ff003c;
+    -fx-border-color: #ff003c;
+}
+.red-btn:hover {
+    -fx-background-color: rgba(255, 0, 60, 0.2);
+    -fx-effect: dropshadow(three-pass-box, #ff003c, 20, 0.5, 0, 0);
+}
