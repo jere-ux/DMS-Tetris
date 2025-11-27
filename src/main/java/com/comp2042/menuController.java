@@ -186,6 +186,9 @@ public class menuController {
         this.quitBtn = quitBtn;
     }
 
+    public void onSettings(ActionEvent actionEvent) {
+    }
+
     private static class FallingShape {
         Shape shape;
         double speed;
