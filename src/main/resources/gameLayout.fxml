@@ -23,6 +23,7 @@
                 </VBox>
             </Pane>
         </VBox>
+        <GridPane fx:id="ghostBrickPanel" vgap="1" hgap="1"/>
         <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
         <BorderPane styleClass="gameBoard" fx:id="gameBoard">
             <center>

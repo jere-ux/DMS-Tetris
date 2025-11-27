@@ -70,6 +70,7 @@ public class GameController implements InputEventListener {
         // Refresh brick view with new brick after game reset
         viewGuiController.refreshBrick(board.getViewData());
     }
+
     @Override
     public DownData onHardDropEvent(MoveEvent event) {
         int dropDistance = 0;
@@ -91,10 +92,4 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         return new DownData(clearRow, board.getViewData());
     }
-
-
-
 }
-
-
-

@@ -11,12 +11,15 @@ public final class ViewData {
     private final int[][] nextBrickData;
     private final List<int[][]> nextThreeBricks;
 
+    private final int ghostYPosition;
+
     public ViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData) {
         this.brickData = brickData;
         this.xPosition = xPosition;
         this.yPosition = yPosition;
         this.nextBrickData = nextBrickData;
         this.nextThreeBricks = new ArrayList<>();
+        this.ghostYPosition = yPosition;
     }
 
     public ViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData, List<int[][]> nextThreeBricks) {
@@ -25,29 +28,43 @@ public final class ViewData {
         this.yPosition = yPosition;
         this.nextBrickData = nextBrickData;
         this.nextThreeBricks = nextThreeBricks != null ? new ArrayList<>(nextThreeBricks) : new ArrayList<>();
+        this.ghostYPosition = yPosition;
     }
 
-    public int[][] getBrickData() {
-        return MatrixOperations.copy(brickData);
+    public ViewData(int[][] brickData, int xPosition, int yPosition, int[][] nextBrickData, List<int[][]> nextThreeBricks, int ghostYPosition) {
+        this.brickData = brickData;
+        this.xPosition = xPosition;
+        this.yPosition = yPosition;
+        this.nextBrickData = nextBrickData;
+        this.nextThreeBricks = nextThreeBricks != null ? new ArrayList<>(nextThreeBricks) : new ArrayList<>();
+        this.ghostYPosition = ghostYPosition;
     }
-
-    public int getxPosition() {
-        return xPosition;
-    }
-
-    public int getyPosition() {
-        return yPosition;
-    }
-
-    public int[][] getNextBrickData() {
-        return MatrixOperations.copy(nextBrickData);
-    }
-
-    public List<int[][]> getNextThreeBricks() {
-        List<int[][]> result = new ArrayList<>();
-        for (int[][] brick : nextThreeBricks) {
-            result.add(MatrixOperations.copy(brick));
+        public int[][] getBrickData () {
+            return MatrixOperations.copy(brickData);
         }
-        return result;
+
+        public int getxPosition () {
+            return xPosition;
+        }
+
+        public int getyPosition () {
+            return yPosition;
+        }
+
+        public int[][] getNextBrickData () {
+            return MatrixOperations.copy(nextBrickData);
+        }
+
+        public List<int[][]> getNextThreeBricks () {
+            List<int[][]> result = new ArrayList<>();
+            for (int[][] brick : nextThreeBricks) {
+                result.add(MatrixOperations.copy(brick));
+            }
+            return result;
+        }
+
+        public int getGhostYPosition () {
+            return ghostYPosition;
+        }
     }
-}
+
