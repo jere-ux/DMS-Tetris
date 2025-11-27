@@ -17,6 +17,8 @@ public class SimpleBoard implements Board {
     private int[][] currentGameMatrix;
     private Point currentOffset;
     private final Score score;
+    private Brick heldBrick;
+    private boolean canHold = true;
 
     public SimpleBoard(int width, int height) {
         this.width = width;
@@ -34,6 +36,7 @@ public class SimpleBoard implements Board {
         p.translate(0, 1);
         boolean conflict = MatrixOperations.intersect(currentMatrix, brickRotator.getCurrentShape(), (int) p.getX(), (int) p.getY());
         if (conflict) {
+            canHold = true;
             return false;
         } else {
             currentOffset = p;
@@ -102,7 +105,8 @@ public class SimpleBoard implements Board {
         for (Brick brick : brickGenerator.getNextBricks(3)) {
             nextThreeBricks.add(brick.getShapeMatrix().get(0));
         }
-        return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), brickGenerator.getNextBrick().getShapeMatrix().get(0), nextThreeBricks, getGhostYPosition());
+        int[][] holdBrickData = heldBrick != null ? heldBrick.getShapeMatrix().get(0) : null;
+        return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), nextThreeBricks, getGhostYPosition(), holdBrickData);
     }
 
     @Override
@@ -128,6 +132,8 @@ public class SimpleBoard implements Board {
     public void newGame() {
         currentGameMatrix = new int[height][width];
         score.reset();
+        heldBrick = null;
+        canHold = true;
         createNewBrick();
     }
 
@@ -138,5 +144,22 @@ public class SimpleBoard implements Board {
             ghostY++;
         }
         return ghostY;
+    }
+
+    @Override
+    public void holdBrick() {
+        if (!canHold) {
+            return;
+        }
+        if (heldBrick == null) {
+            heldBrick = brickRotator.getBrick();
+            createNewBrick();
+        } else {
+            Brick tmp = brickRotator.getBrick();
+            brickRotator.setBrick(heldBrick);
+            heldBrick = tmp;
+            currentOffset = new Point(4, 0);
+        }
+        canHold = false;
     }
 }

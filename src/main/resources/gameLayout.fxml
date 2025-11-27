@@ -1,3 +1,4 @@
+
 <?import com.comp2042.GameOverPanel?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -9,8 +10,15 @@
 <StackPane fx:controller="com.comp2042.GuiController"
            xmlns:fx="http://javafx.com/fxml"
            alignment="CENTER">
-    <Pane prefWidth="340" prefHeight="510" maxWidth="340" maxHeight="510">
-        <VBox alignment="TOP_LEFT" layoutX="250" layoutY="10" spacing="2" prefWidth="110">
+    <Pane prefWidth="495" prefHeight="520" maxWidth="495" maxHeight="520">
+        <VBox alignment="TOP_LEFT" layoutX="10" layoutY="40" spacing="2" prefWidth="80">
+            <Label text="HOLD" styleClass="scoreTitleClass" prefWidth="80"/>
+            <Pane styleClass="nextBrick" prefWidth="80" prefHeight="80" maxWidth="80" maxHeight="80">
+                <GridPane fx:id="holdBrickPanel" hgap="1" vgap="1" layoutX="15" layoutY="15"/>
+            </Pane>
+        </VBox>
+
+        <VBox alignment="TOP_LEFT" layoutX="375" layoutY="40" spacing="2" prefWidth="110">
             <Label text="SCORE" styleClass="scoreTitleClass" prefWidth="110"/>
             <Label fx:id="scoreLabel" text="0" styleClass="scoreClass" prefWidth="110"/>
             <Label text="HIGH SCORE" styleClass="scoreTitleClass" prefWidth="110" wrapText="true"/>
@@ -23,15 +31,16 @@
                 </VBox>
             </Pane>
         </VBox>
+
         <GridPane fx:id="ghostBrickPanel" vgap="1" hgap="1"/>
         <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
-        <BorderPane styleClass="gameBoard" fx:id="gameBoard">
+        <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="122" layoutY="40" prefWidth="233" prefHeight="443">
             <center>
-                <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
+                <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
             </center>
         </BorderPane>
 
-        <Group fx:id="groupNotification" layoutX="14" layoutY="203">
+        <Group fx:id="groupNotification" layoutX="122" layoutY="230">
             <VBox alignment="CENTER">
                 <GameOverPanel fx:id="gameOverPanel"/>
             </VBox>

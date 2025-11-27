@@ -30,7 +30,6 @@ public class GameController implements InputEventListener {
                 board.getScore().add(clearRow.getScoreBonus());
             }
             if (board.createNewBrick()) {
-                board.getScore().updateHighScore();// update highscore when the game finishes
                 viewGuiController.gameOver();
             }
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
@@ -61,35 +60,37 @@ public class GameController implements InputEventListener {
         return board.getViewData();
     }
 
-
     @Override
-    public void createNewGame() {
-        board.newGame();
-        board.getScore().reset();
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
-        // Refresh brick view with new brick after game reset
-        viewGuiController.refreshBrick(board.getViewData());
+    public ViewData onHoldEvent(MoveEvent event) {
+        board.holdBrick();
+        return board.getViewData();
     }
 
     @Override
     public DownData onHardDropEvent(MoveEvent event) {
-        int dropDistance = 0;
+        // Move brick down as far as possible
         while (board.moveBrickDown()) {
-            dropDistance++;
+            // Keep moving down
         }
-        if (dropDistance > 0) {
-            board.getScore().add(dropDistance * 2);
-        }
+        // Brick has landed - merge it to the board
         board.mergeBrickToBackground();
         ClearRow clearRow = board.clearRows();
+        // Award bonus points for clearing lines
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
         }
         if (board.createNewBrick()) {
-            board.getScore().updateHighScore();
             viewGuiController.gameOver();
         }
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         return new DownData(clearRow, board.getViewData());
+    }
+
+    @Override
+    public void createNewGame() {
+        board.newGame();
+        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        // Refresh brick view with new brick after game reset
+        viewGuiController.refreshBrick(board.getViewData());
     }
 }
