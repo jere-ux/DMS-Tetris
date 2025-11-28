@@ -34,7 +34,7 @@
 
         <GridPane fx:id="ghostBrickPanel" vgap="1" hgap="1"/>
         <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
-        <BorderPane styleClass="gameBoard" fx:id="gameBoard" layoutX="122" layoutY="40" prefWidth="212" prefHeight="443">
+        <BorderPane fx:id="gameBoard" layoutX="122" layoutY="40" prefWidth="212" prefHeight="443">
             <center>
                 <GridPane fx:id="gamePanel" hgap="1" vgap="1"/>
             </center>

@@ -8,12 +8,6 @@
     -fx-border-radius: 17px;
 }
 
-.gameBoard {
-    -fx-border-color: linear-gradient(#2A5058, #61a2b1);
-    -fx-border-width: 12px;
-    -fx-border-radius: 12px;
-}
-
 .scoreTitleClass {
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 18px;

@@ -142,6 +142,8 @@ public class GuiController implements Initializable {
         if (highScoreLabel != null) {
             highScoreLabel.setText("0");
         }
+         gameBoard.setStyle("-fx-border-color: linear-gradient(#2A5058, #61a2b1); -fx-border-width: 12px; -fx-border-radius: 12px;");
+        gamePanel.setGridLinesVisible(true);
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
