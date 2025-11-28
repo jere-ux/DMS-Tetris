@@ -42,6 +42,7 @@ public class GameController implements InputEventListener {
         return new DownData(clearRow, board.getViewData());
     }
 
+
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
         board.moveBrickLeft();
