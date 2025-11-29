@@ -1,5 +1,6 @@
 
 <?import com.comp2042.GameOverPanel?>
+<?import com.comp2042.PauseMenuPanel?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToggleButton?>
@@ -7,6 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
+
 <StackPane fx:controller="com.comp2042.GuiController"
            xmlns:fx="http://javafx.com/fxml"
            alignment="CENTER">
@@ -42,10 +44,11 @@
 
         <Group fx:id="groupNotification" layoutX="122" layoutY="230">
             <VBox alignment="CENTER">
-                <GameOverPanel fx:id="gameOverPanel"/>
             </VBox>
         </Group>
     </Pane>
+    <PauseMenuPanel fx:id="pauseMenuPanel"/>
+    <GameOverPanel fx:id="gameOverPanel"/>
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>

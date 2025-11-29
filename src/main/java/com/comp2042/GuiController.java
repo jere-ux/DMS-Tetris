@@ -61,6 +61,9 @@ public class GuiController implements Initializable {
     private GameOverPanel gameOverPanel;
 
     @FXML
+    private PauseMenuPanel pauseMenuPanel;
+
+    @FXML
     private Label scoreLabel;
 
     @FXML
@@ -142,6 +145,11 @@ public class GuiController implements Initializable {
         gameOverPanel.setVisible(false);
 
         gameOverPanel.setOnNewGameButtonClick(e -> newGame(e));
+
+        // Initialize pause menu panel
+        pauseMenuPanel.setVisible(false);
+        pauseMenuPanel.setOnResumeButtonClick(e -> togglePause());
+        pauseMenuPanel.setOnNewGameButtonClick(e -> newGame(e));
 
         if (scoreLabel != null) {
             scoreLabel.setText("0");
@@ -405,6 +413,7 @@ public class GuiController implements Initializable {
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         gameOverPanel.setVisible(false);
+        pauseMenuPanel.setVisible(false);
         eventListener.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
@@ -417,9 +426,12 @@ public class GuiController implements Initializable {
             if (isPause.getValue()) {
                 isPause.setValue(Boolean.FALSE);
                 timeLine.play();
+                pauseMenuPanel.setVisible(false);
             } else {
                 isPause.setValue(Boolean.TRUE);
                 timeLine.pause();
+                pauseMenuPanel.setVisible(true);
+                pauseMenuPanel.toFront();
             }
         }
         gamePanel.requestFocus();
