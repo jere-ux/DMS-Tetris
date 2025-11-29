@@ -11,10 +11,10 @@
            xmlns:fx="http://javafx.com/fxml"
            alignment="CENTER">
     <Pane prefWidth="495" prefHeight="520" maxWidth="495" maxHeight="520">
-        <VBox alignment="TOP_LEFT" layoutX="10" layoutY="40" spacing="2" prefWidth="80">
-            <Label text="HOLD" styleClass="scoreTitleClass" prefWidth="80"/>
-            <Pane styleClass="nextBrick" prefWidth="80" prefHeight="80" maxWidth="80" maxHeight="80">
-                <GridPane fx:id="holdBrickPanel" hgap="1" vgap="1" layoutX="15" layoutY="15"/>
+        <VBox alignment="TOP_LEFT" layoutX="10" layoutY="40" spacing="2" prefWidth="100">
+            <Label text="HOLD" styleClass="scoreTitleClass" prefWidth="100"/>
+            <Pane styleClass="nextBrick" prefWidth="80" prefHeight="100" maxWidth="100" maxHeight="100">
+                <GridPane fx:id="holdBrickPanel" hgap="1" vgap="1" layoutX="10" layoutY="10"/>
             </Pane>
         </VBox>
 
