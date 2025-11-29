@@ -30,11 +30,8 @@ public class menuController {
 
     public ImageView backgroundImage;
     public Button HelpBtn;
-    public Button SettingsBtn;
     @FXML private Pane particlePane;
     @FXML private Button newGameBtn;
-    @FXML private Button optionsBtn;
-    @FXML private Button quitBtn;
     @FXML private VBox mainMenuVBox;
     @FXML private VBox helpPane;
 
@@ -183,11 +180,6 @@ public class menuController {
     }
 
     @FXML
-    public void onOptions(ActionEvent event) {
-        System.out.println("Options clicked");
-    }
-
-    @FXML
     public void onQuit(ActionEvent event) {
         stopMenuMusic(); // Stop music before quitting
         Platform.exit();
@@ -200,21 +192,6 @@ public class menuController {
 
     public void setNewGameBtn(Button newGameBtn) {
         this.newGameBtn = newGameBtn;
-    }
-
-    public Button getOptionsBtn() {
-        return optionsBtn;
-    }
-
-    public void setOptionsBtn(Button optionsBtn) {
-        this.optionsBtn = optionsBtn;
-    }
-
-
-
-
-
-    public void onSettings(ActionEvent actionEvent) {
     }
 
     @FXML

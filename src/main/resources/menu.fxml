@@ -25,7 +25,6 @@
                 <VBox alignment="CENTER" spacing="20.0">
                     <children>
                         <Button fx:id="newGameBtn" mnemonicParsing="false" onAction="#onNewGame" styleClass="cyber-button, green-btn" text="NEW GAME" />
-                        <Button fx:id="SettingsBtn" mnemonicParsing="false" onAction="#onSettings" styleClass="cyber-button, yellow-btn" text="SETTINGS" />
                         <Button fx:id="HelpBtn" mnemonicParsing="false" onAction="#onHelp" styleClass="cyber-button, red-btn" text="HELP" />
                     </children>
                 </VBox>

@@ -150,6 +150,15 @@ public class GuiController implements Initializable {
         if (highScoreLabel != null) {
             highScoreLabel.setText("0");
         }
+        // Add reflection effect to the game board
+        if (gameBoard != null) {
+            Reflection reflection = new Reflection();
+            reflection.setFraction(0.4);
+            reflection.setTopOffset(2.0);
+            gameBoard.setEffect(reflection);
+        }
+
+
          gameBoard.setStyle("-fx-border-color: linear-gradient(#2A5058, #61a2b1); -fx-border-width: 12px; -fx-border-radius: 12px;");
         gamePanel.setGridLinesVisible(true);
         groupNotification.layoutXProperty().bind(gameBoard.widthProperty().subtract(groupNotification.idProperty().length()).divide(2));
