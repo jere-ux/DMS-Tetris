@@ -69,10 +69,12 @@ public class GameController implements InputEventListener {
 
     @Override
     public DownData onHardDropEvent(MoveEvent event) {
+        int distance = 0;
         // Move brick down as far as possible
         while (board.moveBrickDown()) {
-            // Keep moving down
+            distance++;
         }
+        board.getScore().add(distance * 2);
         // Brick has landed - merge it to the board
         board.mergeBrickToBackground();
         ClearRow clearRow = board.clearRows();
