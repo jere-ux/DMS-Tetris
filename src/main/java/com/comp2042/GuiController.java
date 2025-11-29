@@ -118,6 +118,14 @@ public class GuiController implements Initializable {
                     }
                     if (keyEvent.getCode() == KeyCode.SPACE) {
                         DownData downData = eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
+                        ClearRow clearRow = downData.getClearRow();
+                        if (clearRow != null) {
+                            if (clearRow.getLinesRemoved() > 0) {
+                                NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
+                                groupNotification.getChildren().add(notificationPanel);
+                                notificationPanel.showScore(groupNotification.getChildren());
+                            }
+                        }
                         refreshBrick(downData.getViewData());
                         keyEvent.consume();
                     }
@@ -144,6 +152,8 @@ public class GuiController implements Initializable {
         }
          gameBoard.setStyle("-fx-border-color: linear-gradient(#2A5058, #61a2b1); -fx-border-width: 12px; -fx-border-radius: 12px;");
         gamePanel.setGridLinesVisible(true);
+        groupNotification.layoutXProperty().bind(gameBoard.widthProperty().subtract(groupNotification.idProperty().length()).divide(2));
+        groupNotification.layoutYProperty().bind(gameBoard.heightProperty().subtract(groupNotification.idProperty().length()).divide(2));
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
