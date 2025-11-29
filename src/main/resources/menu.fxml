@@ -39,8 +39,11 @@
             <children>
                 <Label styleClass="help-title" text="Instructions" />
                 <Text styleClass="help-text" text="Move Brick: Left &amp; Right Arrows" />
+                <Text styleClass="help-text" text="Up arrow to rotate the brick" />
                 <Text styleClass="help-text" text="Speed Up: Down Arrow" />
                 <Text styleClass="help-text" text="Drop Instantly (Hard drop): Space Bar" />
+                <Text styleClass="help-text" text="N for new game" />
+                <Text styleClass="help-text" text="P to pause the game" />
                 <Button mnemonicParsing="false" onAction="#onHelpBack" styleClass="cyber-button, blue-btn" text="BACK" />
             </children>
         </VBox>
