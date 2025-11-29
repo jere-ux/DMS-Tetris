@@ -37,4 +37,21 @@ public class RandomBrickGenerator implements BrickGenerator {
     public Brick getNextBrick() {
         return nextBricks.peek();
     }
+
+    @Override
+    public List<Brick> getNextBricks(int count) {
+        // Ensure we have enough bricks in the queue
+        while (nextBricks.size() < count) {
+            nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
+        }
+        // Return the first 'count' bricks without removing them
+        List<Brick> result = new ArrayList<>();
+        int i = 0;
+        for (Brick brick : nextBricks) {
+            if (i >= count) break;
+            result.add(brick);
+            i++;
+        }
+        return result;
+    }
 }

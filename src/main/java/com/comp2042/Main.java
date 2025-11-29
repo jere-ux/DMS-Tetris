@@ -6,27 +6,30 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.io.IOException;
 
 public class Main extends Application {
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-
-        URL location = getClass().getClassLoader().getResource("gameLayout.fxml");
-        ResourceBundle resources = null;
-        FXMLLoader fxmlLoader = new FXMLLoader(location, resources);
-        Parent root = fxmlLoader.load();
-        GuiController c = fxmlLoader.getController();
-
-        primaryStage.setTitle("TetrisJFX");
-        Scene scene = new Scene(root, 340, 510);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        new GameController(c);
+    public void start() throws IOException {
+        start(new Stage());
     }
 
+    @Override
+    public void start(Stage primaryStage) throws IOException {
+        if (primaryStage == null) {
+            primaryStage = new Stage();
+        }
+
+        primaryStage.setTitle("TETRIS");
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Menu.fxml"));
+        Parent root = loader.load();
+
+        Scene scene = new Scene(root, 600, 600);
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
+    }
 
     public static void main(String[] args) {
         launch(args);

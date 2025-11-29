@@ -2,6 +2,7 @@ package com.comp2042;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -14,7 +15,7 @@ public class GameOverPanel extends BorderPane {
 
     public GameOverPanel() {
         VBox container = new VBox(15);
-        container.setAlignment(javafx.geometry.Pos.CENTER);
+        container.setAlignment(Pos.CENTER);
 
         final Label gameOverLabel = new Label("GAME OVER");
         gameOverLabel.getStyleClass().add("gameOverStyle");
@@ -24,6 +25,7 @@ public class GameOverPanel extends BorderPane {
 
         container.getChildren().addAll(gameOverLabel, newGameButton);
         setCenter(container);
+        BorderPane.setAlignment(container, Pos.CENTER);
     }
 
     // Wires button click to handler

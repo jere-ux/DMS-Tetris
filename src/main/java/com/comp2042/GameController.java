@@ -2,7 +2,7 @@ package com.comp2042;
 
 public class GameController implements InputEventListener {
 
-    private Board board = new SimpleBoard(25, 10);
+    private Board board = new SimpleBoard(10, 25);
 
     private final GuiController viewGuiController;
 
@@ -13,6 +13,8 @@ public class GameController implements InputEventListener {
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         // Connect score to UI - score label will update automatically
         viewGuiController.bindScore(board.getScore().scoreProperty());
+        // Connect high score to UI - high score label will update automatically
+        viewGuiController.bindHighScore(board.getScore().highScoreProperty());
     }
 
     @Override
@@ -40,6 +42,7 @@ public class GameController implements InputEventListener {
         return new DownData(clearRow, board.getViewData());
     }
 
+
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
         board.moveBrickLeft();
@@ -58,6 +61,31 @@ public class GameController implements InputEventListener {
         return board.getViewData();
     }
 
+    @Override
+    public ViewData onHoldEvent(MoveEvent event) {
+        board.holdBrick();
+        return board.getViewData();
+    }
+
+    @Override
+    public DownData onHardDropEvent(MoveEvent event) {
+        // Move brick down as far as possible
+        while (board.moveBrickDown()) {
+            // Keep moving down
+        }
+        // Brick has landed - merge it to the board
+        board.mergeBrickToBackground();
+        ClearRow clearRow = board.clearRows();
+        // Award bonus points for clearing lines
+        if (clearRow.getLinesRemoved() > 0) {
+            board.getScore().add(clearRow.getScoreBonus());
+        }
+        if (board.createNewBrick()) {
+            viewGuiController.gameOver();
+        }
+        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        return new DownData(clearRow, board.getViewData());
+    }
 
     @Override
     public void createNewGame() {
