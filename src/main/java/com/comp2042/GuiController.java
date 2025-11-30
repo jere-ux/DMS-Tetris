@@ -79,7 +79,7 @@ public class GuiController implements Initializable {
     private int[][] storedNextBrickData1;
     private int[][] storedNextBrickData2;
     private int[][] storedNextBrickData3;
-    private int[][] storedHoldBrickData;
+
 
     private Timeline timeLine;
 
@@ -96,12 +96,12 @@ public class GuiController implements Initializable {
             @Override
             public void handle(KeyEvent keyEvent) {
 
-                if (keyEvent.getCode() == KeyCode.P && isGameOver.getValue() == Boolean.FALSE) {
+                if (keyEvent.getCode() == KeyCode.P && isGameOver.getValue()) {
                     togglePause();
                     keyEvent.consume();
                 }
 
-                if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
+                 if (!isPause.getValue() && !isGameOver.getValue()) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
                         keyEvent.consume();
@@ -304,7 +304,7 @@ public class GuiController implements Initializable {
                 }
             }
         }
-        storedHoldBrickData = holdBrickData;
+
     }
 
     private void refreshNextBricks(java.util.List<int[][]> nextThreeBricks) {
@@ -321,7 +321,7 @@ public class GuiController implements Initializable {
     }
 
     public void refreshBrick(ViewData brick) {
-        if (isPause.getValue() == Boolean.FALSE) {
+        if (!isPause.getValue()) {
             brickPanel.toFront();
             ghostBrickPanel.toFront();
             refreshNextBricks(brick.getNextThreeBricks());
@@ -370,7 +370,7 @@ public class GuiController implements Initializable {
     }
 
     private void moveDown(MoveEvent event) {
-        if (isPause.getValue() == Boolean.FALSE) {
+        if (!isPause.getValue()){
             DownData downData = eventListener.onDownEvent(event);
             ClearRow clearRow = downData.getClearRow();
             if (clearRow != null) {
@@ -406,7 +406,7 @@ public class GuiController implements Initializable {
         timeLine.stop();
         gameOverPanel.setVisible(true);
         gameOverPanel.toFront();
-        isGameOver.setValue(Boolean.TRUE);
+        isGameOver.setValue(true);;
     }
 
     public void newGame(ActionEvent actionEvent) {
@@ -416,18 +416,18 @@ public class GuiController implements Initializable {
         eventListener.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
-        isPause.setValue(Boolean.FALSE);
-        isGameOver.setValue(Boolean.FALSE);
+        isPause.setValue(false);
+        isGameOver.setValue(false);
     }
 
     public void togglePause() {
         if (timeLine != null && !isGameOver.getValue()) {
             if (isPause.getValue()) {
-                isPause.setValue(Boolean.FALSE);
+                isPause.setValue(false);
                 timeLine.play();
                 pauseMenuPanel.setVisible(false);
             } else {
-                isPause.setValue(Boolean.TRUE);
+                isPause.setValue(true);
                 timeLine.pause();
                 pauseMenuPanel.setVisible(true);
                 pauseMenuPanel.toFront();
