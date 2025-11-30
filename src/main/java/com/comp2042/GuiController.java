@@ -96,12 +96,12 @@ public class GuiController implements Initializable {
             @Override
             public void handle(KeyEvent keyEvent) {
 
-                if (keyEvent.getCode() == KeyCode.P && isGameOver.getValue()) {
+                if (keyEvent.getCode() == KeyCode.P && !isGameOver.getValue()) {
                     togglePause();
                     keyEvent.consume();
                 }
 
-                 if (!isPause.getValue() && !isGameOver.getValue()) {
+                if (!isPause.getValue() && !isGameOver.getValue()) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
                         keyEvent.consume();
@@ -127,6 +127,7 @@ public class GuiController implements Initializable {
                                 groupNotification.getChildren().add(notificationPanel);
                                 notificationPanel.showScore(groupNotification.getChildren());
                             }
+                            refreshGameBackground(clearRow.getNewMatrix());
                         }
                         refreshBrick(downData.getViewData());
                         keyEvent.consume();
@@ -146,9 +147,11 @@ public class GuiController implements Initializable {
         gameOverPanel.setOnNewGameButtonClick(e -> newGame(e));
 
         // Initialize pause menu panel
-        pauseMenuPanel.setVisible(false);
-        pauseMenuPanel.setOnResumeButtonClick(e -> togglePause());
-        pauseMenuPanel.setOnNewGameButtonClick(e -> newGame(e));
+        if (pauseMenuPanel != null) {
+            pauseMenuPanel.setVisible(false);
+            pauseMenuPanel.setOnResumeButtonClick(e -> togglePause());
+            pauseMenuPanel.setOnNewGameButtonClick(e -> newGame(e));
+        }
 
         if (scoreLabel != null) {
             scoreLabel.setText("0");
@@ -166,7 +169,7 @@ public class GuiController implements Initializable {
         }
 
 
-         gameBoard.setStyle("-fx-border-color: linear-gradient(#2A5058, #61a2b1); -fx-border-width: 12px; -fx-border-radius: 12px;");
+        gameBoard.setStyle("-fx-border-color: linear-gradient(#2A5058, #61a2b1); -fx-border-width: 12px; -fx-border-radius: 12px;");
         gamePanel.setGridLinesVisible(true);
         groupNotification.layoutXProperty().bind(gameBoard.widthProperty().subtract(groupNotification.idProperty().length()).divide(2));
         groupNotification.layoutYProperty().bind(gameBoard.heightProperty().subtract(groupNotification.idProperty().length()).divide(2));
@@ -406,7 +409,7 @@ public class GuiController implements Initializable {
         timeLine.stop();
         gameOverPanel.setVisible(true);
         gameOverPanel.toFront();
-        isGameOver.setValue(true);;
+        isGameOver.setValue(true);
     }
 
     public void newGame(ActionEvent actionEvent) {
@@ -425,12 +428,17 @@ public class GuiController implements Initializable {
             if (isPause.getValue()) {
                 isPause.setValue(false);
                 timeLine.play();
-                pauseMenuPanel.setVisible(false);
+                if (pauseMenuPanel != null) {
+                    pauseMenuPanel.setVisible(false);
+                }
             } else {
                 isPause.setValue(true);
                 timeLine.pause();
-                pauseMenuPanel.setVisible(true);
-                pauseMenuPanel.toFront();
+                if (pauseMenuPanel != null) {
+                    pauseMenuPanel.setVisible(true);
+                    pauseMenuPanel.toFront();
+                    groupNotification.toFront();
+                }
             }
         }
         gamePanel.requestFocus();
