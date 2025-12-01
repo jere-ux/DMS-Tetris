@@ -30,6 +30,9 @@ public class GameController implements InputEventListener {
                 board.getScore().add(clearRow.getScoreBonus());
             }
             if (board.createNewBrick()) {
+                //  Save high score when game ends
+                board.getScore().updateHighScore();
+                viewGuiController.gameOver();
                 viewGuiController.gameOver();
             }
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
@@ -85,6 +88,9 @@ public class GameController implements InputEventListener {
         if (board.createNewBrick()) {
             viewGuiController.gameOver();
         }
+
+
+
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         return new DownData(clearRow, board.getViewData());
     }
