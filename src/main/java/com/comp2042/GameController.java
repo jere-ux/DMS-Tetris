@@ -33,7 +33,7 @@ public class GameController implements InputEventListener {
                 //  Save high score when game ends
                 board.getScore().updateHighScore();
                 viewGuiController.gameOver();
-                viewGuiController.gameOver();
+
             }
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
         } else {
