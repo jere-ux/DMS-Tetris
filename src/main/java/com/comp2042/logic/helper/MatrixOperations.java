@@ -1,6 +1,6 @@
 package com.comp2042.logic.helper;
 
-import com.comp2042.ClearRow;
+import com.comp2042.logic.events.ClearRow;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

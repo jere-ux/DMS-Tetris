@@ -7,6 +7,7 @@ import com.comp2042.EventSource;
 import com.comp2042.InputEventListener;
 import com.comp2042.MoveEvent;
 import com.comp2042.ViewData;
+import com.comp2042.logic.SimpleBoard;
 import com.comp2042.view.GuiController;
 
 public class GameController implements InputEventListener {
