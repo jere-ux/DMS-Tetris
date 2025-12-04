@@ -1,6 +1,7 @@
 package com.comp2042;
 
 import com.comp2042.logic.Score;
+import com.comp2042.view.ViewData;
 
 public interface Board {
 

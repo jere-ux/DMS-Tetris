@@ -1,7 +1,5 @@
 package com.comp2042.view;
 
-import com.comp2042.ClearRow;
-import com.comp2042.DownData;
 import com.comp2042.EventSource;
 import com.comp2042.EventType;
 import com.comp2042.GameOverPanel;
@@ -9,6 +7,7 @@ import com.comp2042.InputEventListener;
 import com.comp2042.MoveEvent;
 import com.comp2042.NotificationPanel;
 import com.comp2042.PauseMenuPanel;
+import com.comp2042.logic.events.ClearRow;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
