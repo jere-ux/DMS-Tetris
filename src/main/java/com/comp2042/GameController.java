@@ -86,6 +86,7 @@ public class GameController implements InputEventListener {
             board.getScore().add(clearRow.getScoreBonus());
         }
         if (board.createNewBrick()) {
+            board.getScore().updateHighScore();
             viewGuiController.gameOver();
         }
 
