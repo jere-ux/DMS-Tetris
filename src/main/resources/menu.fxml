@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<StackPane fx:id="rootPane" prefHeight="600.0" prefWidth="800.0" stylesheets="@menu-style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2042.MenuController">
+<StackPane fx:id="rootPane" prefHeight="600.0" prefWidth="800.0" stylesheets="@menu-style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.comp2042.controller.MenuController">
     <children>
         <ImageView fx:id="backgroundImage" fitHeight="600.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="false">
             <image>

@@ -1,4 +1,4 @@
-package com.comp2042;
+package com.comp2042.app;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -9,10 +9,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Main extends Application {
-
-    public void start() throws IOException {
-        start(new Stage());
-    }
 
     @Override
     public void start(Stage primaryStage) throws IOException {

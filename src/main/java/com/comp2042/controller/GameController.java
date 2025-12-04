@@ -6,7 +6,6 @@ import com.comp2042.DownData;
 import com.comp2042.EventSource;
 import com.comp2042.InputEventListener;
 import com.comp2042.MoveEvent;
-import com.comp2042.SimpleBoard;
 import com.comp2042.ViewData;
 import com.comp2042.view.GuiController;
 

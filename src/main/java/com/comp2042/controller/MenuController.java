@@ -1,6 +1,5 @@
-package com.comp2042;
+package com.comp2042.controller;
 
-import com.comp2042.controller.GameController;
 import com.comp2042.view.GuiController;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -166,7 +165,7 @@ public class MenuController {
             Parent root = loader.load();
 
             // Initialize the Game Logic
-            GuiController guiController = loader.getController();
+            com.comp2042.view.GuiController guiController = loader.getController();
             new GameController(guiController);
 
             // Switch the Scene

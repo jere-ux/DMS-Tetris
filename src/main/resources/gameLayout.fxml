@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 
-<StackPane fx:controller="com.comp2042.view.GuiController"
+<StackPane fx:controller="com.comp2042.GuiController"
            xmlns:fx="http://javafx.com/fxml"
            alignment="CENTER">
     <Pane prefWidth="495" prefHeight="520" maxWidth="495" maxHeight="520">
