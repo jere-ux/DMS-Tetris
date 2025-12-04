@@ -1,12 +1,11 @@
 package com.comp2042.logic;
 
 import com.comp2042.Board;
-import com.comp2042.ClearRow;
 import com.comp2042.NextShapeInfo;
-import com.comp2042.ViewData;
 import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
+import com.comp2042.logic.events.ClearRow;
 import com.comp2042.logic.helper.BrickRotator;
 import com.comp2042.logic.helper.MatrixOperations;
 
