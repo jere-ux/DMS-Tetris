@@ -30,8 +30,8 @@ import java.util.Random;
 
 public class MenuController {
 
-    public ImageView backgroundImage;
-    public Button HelpBtn;
+    @FXML private ImageView backgroundImage;
+    @FXML private Button helpBtn;
     @FXML private Pane particlePane;
     @FXML private Button newGameBtn;
     @FXML private VBox mainMenuVBox;
@@ -188,14 +188,6 @@ public class MenuController {
         System.exit(0);
     }
 
-    public Button getNewGameBtn() {
-        return newGameBtn;
-    }
-
-    public void setNewGameBtn(Button newGameBtn) {
-        this.newGameBtn = newGameBtn;
-    }
-
     @FXML
     public void onHelp(ActionEvent actionEvent) {
         mainMenuVBox.setVisible(false);
@@ -209,8 +201,8 @@ public class MenuController {
     }
 
     private static class FallingShape {
-        Shape shape;
-        double speed;
+        private final Shape shape;
+        private final double speed;
 
         public FallingShape(Shape shape, double speed) {
             this.shape = shape;
