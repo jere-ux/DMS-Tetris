@@ -1,7 +1,6 @@
 package com.comp2042.controller;
 
 import com.comp2042.logic.events.EventSource;
-import com.comp2042.InputEventListener;
 import com.comp2042.logic.Board;
 import com.comp2042.logic.SimpleBoard;
 import com.comp2042.logic.events.MoveEvent;

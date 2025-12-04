@@ -1,6 +1,6 @@
 package com.comp2042.view;
 
-import com.comp2042.InputEventListener;
+import com.comp2042.controller.InputEventListener;
 import com.comp2042.logic.events.ClearRow;
 import com.comp2042.logic.events.EventSource;
 import com.comp2042.logic.events.EventType;
