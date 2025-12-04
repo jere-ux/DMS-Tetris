@@ -4,11 +4,11 @@ import com.comp2042.Board;
 import com.comp2042.ClearRow;
 import com.comp2042.DownData;
 import com.comp2042.EventSource;
-import com.comp2042.GuiController;
 import com.comp2042.InputEventListener;
 import com.comp2042.MoveEvent;
 import com.comp2042.SimpleBoard;
 import com.comp2042.ViewData;
+import com.comp2042.view.GuiController;
 
 public class GameController implements InputEventListener {
 
