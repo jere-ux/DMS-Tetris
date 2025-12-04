@@ -1,11 +1,8 @@
 package com.comp2042.view;
 
-import com.comp2042.EventSource;
-import com.comp2042.GameOverPanel;
 import com.comp2042.InputEventListener;
-import com.comp2042.NotificationPanel;
-import com.comp2042.PauseMenuPanel;
 import com.comp2042.logic.events.ClearRow;
+import com.comp2042.logic.events.EventSource;
 import com.comp2042.logic.events.EventType;
 import com.comp2042.logic.events.MoveEvent;
 import javafx.animation.KeyFrame;

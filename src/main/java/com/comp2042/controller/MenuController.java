@@ -1,6 +1,7 @@
 package com.comp2042.controller;
 
 import com.comp2042.view.GuiController;
+import com.comp2042.controller.GameController;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

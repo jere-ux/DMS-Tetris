@@ -1,18 +1,18 @@
 package com.comp2042.controller;
 
-import com.comp2042.EventSource;
+import com.comp2042.logic.events.EventSource;
 import com.comp2042.InputEventListener;
 import com.comp2042.logic.Board;
 import com.comp2042.logic.SimpleBoard;
-import com.comp2042.logic.events.ClearRow;
 import com.comp2042.logic.events.MoveEvent;
 import com.comp2042.view.DownData;
 import com.comp2042.view.GuiController;
 import com.comp2042.view.ViewData;
+import com.comp2042.logic.events.ClearRow;
 
 public class GameController implements InputEventListener {
 
-    private Board board = new SimpleBoard(10, 25);
+    private final Board board = new SimpleBoard(10, 25);
 
     private final GuiController viewGuiController;
 
