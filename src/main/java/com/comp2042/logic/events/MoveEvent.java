@@ -1,7 +1,5 @@
 package com.comp2042.logic.events;
 
-import com.comp2042.EventSource;
-
 public final class MoveEvent {
     private final EventType eventType;
     private final EventSource eventSource;
