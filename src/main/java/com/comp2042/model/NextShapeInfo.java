@@ -1,5 +1,7 @@
 package com.comp2042.model;
 
+import com.comp2042.logic.helper.MatrixOperations;
+
 public final class NextShapeInfo {
 
     private final int[][] shape;
