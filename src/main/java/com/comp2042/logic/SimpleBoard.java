@@ -15,9 +15,10 @@ import java.util.Random;
 
 public class SimpleBoard implements Board {
 
+    public static final int BOMB_ID = 8;
     private final int width;
     private final int height;
-    private final BrickGenerator brickGenerator;
+    private final RandomBrickGenerator brickGenerator;
     private final BrickRotator brickRotator;
     private int[][] currentGameMatrix;
     private Point currentOffset;
@@ -116,7 +117,12 @@ public class SimpleBoard implements Board {
 
     @Override
     public void mergeBrickToBackground() {
-        currentGameMatrix = MatrixOperations.merge(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
+        if (isCurrentBrickBomb()) {
+            Point bombCenter = getBombCenter();
+            detonateBomb((int) bombCenter.getX(), (int) bombCenter.getY());
+        } else {
+            currentGameMatrix = MatrixOperations.merge(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
+        }
     }
 
     @Override
@@ -139,6 +145,7 @@ public class SimpleBoard implements Board {
         score.reset();
         heldBrick = null;
         canHold = true;
+        brickGenerator.resetPowerUpProgress();
         createNewBrick();
     }
 
@@ -185,5 +192,63 @@ public class SimpleBoard implements Board {
                 }
             }
         }
+    }
+
+    public boolean isCurrentBrickBomb() {
+        return brickRotator.getBrick().isBomb();
+    }
+
+    public Point getBrickPosition() {
+        return currentOffset;
+    }
+
+    public List<Point> detonateBomb(int centerX, int centerY) {
+        List<Point> clearedBlocks = new ArrayList<>();
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                int x = centerX + j;
+                int y = centerY + i;
+
+                if (y >= 0 && y < height && x >= 0 && x < width) {
+                    if (currentGameMatrix[y][x] != 0) {
+                        clearedBlocks.add(new Point(x, y));
+                    }
+                    currentGameMatrix[y][x] = 0;
+                }
+            }
+        }
+        return clearedBlocks;
+    }
+
+    private Point getBombCenter() {
+        int[][] shape = brickRotator.getCurrentShape();
+        for (int i = 0; i < shape.length; i++) {
+            for (int j = 0; j < shape[i].length; j++) {
+                if (shape[i][j] == BOMB_ID) {
+                    return new Point(currentOffset.x + j, currentOffset.y + i);
+                }
+            }
+        }
+        return currentOffset; // Fallback
+    }
+
+    @Override
+    public void handleGravity() {
+        for (int j = 0; j < width; j++) {
+            int emptyRow = -1;
+            for (int i = height - 1; i >= 0; i--) {
+                if (currentGameMatrix[i][j] == 0 && emptyRow == -1) {
+                    emptyRow = i;
+                } else if (currentGameMatrix[i][j] != 0 && emptyRow != -1) {
+                    currentGameMatrix[emptyRow][j] = currentGameMatrix[i][j];
+                    currentGameMatrix[i][j] = 0;
+                    emptyRow--;
+                }
+            }
+        }
+    }
+
+    public RandomBrickGenerator getBrickGenerator() {
+        return brickGenerator;
     }
 }

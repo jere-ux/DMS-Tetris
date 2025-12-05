@@ -4,7 +4,6 @@ import com.comp2042.logic.events.ClearRow;
 import com.comp2042.view.ViewData;
 
 public interface Board {
-
     boolean moveBrickDown();
 
     boolean moveBrickLeft();
@@ -32,4 +31,6 @@ public interface Board {
     void holdBrick();
 
     void createPyramidObstacle();
+
+    void handleGravity();
 }

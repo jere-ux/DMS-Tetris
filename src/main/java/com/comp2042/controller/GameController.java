@@ -1,8 +1,8 @@
 package com.comp2042.controller;
 
+import com.comp2042.logic.SimpleBoard;
 import com.comp2042.logic.events.EventSource;
 import com.comp2042.logic.Board;
-import com.comp2042.logic.SimpleBoard;
 import com.comp2042.logic.events.EventType;
 import com.comp2042.logic.events.MoveEvent;
 import com.comp2042.model.GameLevel;
@@ -12,9 +12,12 @@ import com.comp2042.view.ViewData;
 import com.comp2042.logic.events.ClearRow;
 import javafx.animation.AnimationTimer;
 
+import java.awt.*;
+import java.util.List;
+
 public class GameController implements InputEventListener {
 
-    private final Board board = new SimpleBoard(10, 25);
+    private final SimpleBoard board;
     private final GuiController viewGuiController;
     private AnimationTimer gameTimer;
     private long lastUpdate = 0;
@@ -23,9 +26,11 @@ public class GameController implements InputEventListener {
 
     public GameController(GuiController c) {
         viewGuiController = c;
+        board = new SimpleBoard(10, 25);
         // Obstacle Mode: Create a pyramid at the start
         if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_C_OBSTACLES) {
             board.createPyramidObstacle();
+            viewGuiController.setPowerUpContainerVisibility(true);
         }
         board.createNewBrick();
         viewGuiController.setEventListener(this);
@@ -64,24 +69,35 @@ public class GameController implements InputEventListener {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
         if (!canMove) {
-            board.mergeBrickToBackground();
-            clearRow = board.clearRows();
-            if (clearRow.getLinesRemoved() > 0) {
-                board.getScore().add(clearRow.getScoreBonus());
-                linesClearedSinceSpeedUp += clearRow.getLinesRemoved();
-                // Speed Curve Mode: Increase speed every 2 lines
-                if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_A_SPEED_CURVE && linesClearedSinceSpeedUp >= 2) {
-                    dropInterval *= 0.85; // 15% faster
-                    linesClearedSinceSpeedUp = 0;
-                    viewGuiController.showSpeedNotification();
+            if (board.isCurrentBrickBomb()) {
+                Point bombCenter = board.getBrickPosition();
+                List<Point> clearedBlocks = board.detonateBomb(bombCenter.x, bombCenter.y);
+                viewGuiController.spawnFireEffect(bombCenter.x, bombCenter.y);
+                viewGuiController.animateBlockRemoval(clearedBlocks, () -> handleBombAftermath(clearedBlocks.size()));
+            } else {
+                board.mergeBrickToBackground();
+                clearRow = board.clearRows();
+                if (clearRow.getLinesRemoved() > 0) {
+                    board.getScore().add(clearRow.getScoreBonus());
+                    linesClearedSinceSpeedUp += clearRow.getLinesRemoved();
+                    if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_C_OBSTACLES) {
+                        board.getBrickGenerator().incrementPowerUpProgress(clearRow.getLinesRemoved());
+                        viewGuiController.updatePowerUpProgressBar(board.getBrickGenerator().getPowerUpProgress() / 5.0);
+                    }
+                    // Speed Curve Mode: Increase speed every 2 lines
+                    if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_A_SPEED_CURVE && linesClearedSinceSpeedUp >= 2) {
+                        dropInterval *= 0.85; // 15% faster
+                        linesClearedSinceSpeedUp = 0;
+                        viewGuiController.showSpeedNotification();
+                    }
                 }
+                if (board.createNewBrick()) {
+                    board.getScore().updateHighScore();
+                    viewGuiController.gameOver();
+                    gameTimer.stop();
+                }
+                viewGuiController.refreshGameBackground(board.getBoardMatrix());
             }
-            if (board.createNewBrick()) {
-                board.getScore().updateHighScore();
-                viewGuiController.gameOver();
-                gameTimer.stop();
-            }
-            viewGuiController.refreshGameBackground(board.getBoardMatrix());
         } else {
             if (event.getEventSource() == EventSource.USER) {
                 board.getScore().add(1);
@@ -121,25 +137,37 @@ public class GameController implements InputEventListener {
             distance++;
         }
         board.getScore().add(distance * 2);
-        board.mergeBrickToBackground();
-        ClearRow clearRow = board.clearRows();
-        if (clearRow.getLinesRemoved() > 0) {
-            board.getScore().add(clearRow.getScoreBonus());
-            linesClearedSinceSpeedUp += clearRow.getLinesRemoved();
-            // Speed Curve Mode: Increase speed every 2 lines
-            if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_A_SPEED_CURVE && linesClearedSinceSpeedUp >= 2) {
-                dropInterval *= 0.85;
-                linesClearedSinceSpeedUp = 0;
-                viewGuiController.showSpeedNotification();
+
+        if (board.isCurrentBrickBomb()) {
+            Point bombCenter = board.getBrickPosition();
+            List<Point> clearedBlocks = board.detonateBomb(bombCenter.x, bombCenter.y);
+            viewGuiController.spawnFireEffect(bombCenter.x, bombCenter.y);
+            viewGuiController.animateBlockRemoval(clearedBlocks, () -> handleBombAftermath(clearedBlocks.size()));
+        } else {
+            board.mergeBrickToBackground();
+            ClearRow clearRow = board.clearRows();
+            if (clearRow.getLinesRemoved() > 0) {
+                board.getScore().add(clearRow.getScoreBonus());
+                linesClearedSinceSpeedUp += clearRow.getLinesRemoved();
+                if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_C_OBSTACLES) {
+                    board.getBrickGenerator().incrementPowerUpProgress(clearRow.getLinesRemoved());
+                    viewGuiController.updatePowerUpProgressBar(board.getBrickGenerator().getPowerUpProgress() / 5.0);
+                }
+                // Speed Curve Mode: Increase speed every 2 lines
+                if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_A_SPEED_CURVE && linesClearedSinceSpeedUp >= 2) {
+                    dropInterval *= 0.85;
+                    linesClearedSinceSpeedUp = 0;
+                    viewGuiController.showSpeedNotification();
+                }
             }
+            if (board.createNewBrick()) {
+                board.getScore().updateHighScore();
+                viewGuiController.gameOver();
+                gameTimer.stop();
+            }
+            viewGuiController.refreshGameBackground(board.getBoardMatrix());
         }
-        if (board.createNewBrick()) {
-            board.getScore().updateHighScore();
-            viewGuiController.gameOver();
-            gameTimer.stop();
-        }
-        viewGuiController.refreshGameBackground(board.getBoardMatrix());
-        return new DownData(clearRow, board.getViewData());
+        return new DownData(null, board.getViewData());
     }
 
     @Override
@@ -148,12 +176,32 @@ public class GameController implements InputEventListener {
         // Obstacle Mode: Create a pyramid at the start of a new game
         if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_C_OBSTACLES) {
             board.createPyramidObstacle();
+            viewGuiController.setPowerUpContainerVisibility(true);
+        } else {
+            viewGuiController.setPowerUpContainerVisibility(false);
         }
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         viewGuiController.refreshBrick(board.getViewData());
         dropInterval = 1_000_000_000;
         linesClearedSinceSpeedUp = 0;
+        viewGuiController.updatePowerUpProgressBar(0);
         lastUpdate = System.nanoTime(); // Reset timer for new game
         gameTimer.start();
+    }
+
+    private void handleBombAftermath(int destroyedBlocks) {
+        board.getScore().add(destroyedBlocks * 50);
+        board.handleGravity();
+        viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        ClearRow clearRow = board.clearRows();
+        if (clearRow.getLinesRemoved() > 0) {
+            board.getScore().add(clearRow.getScoreBonus());
+            viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        }
+        if (board.createNewBrick()) {
+            board.getScore().updateHighScore();
+            viewGuiController.gameOver();
+            gameTimer.stop();
+        }
     }
 }

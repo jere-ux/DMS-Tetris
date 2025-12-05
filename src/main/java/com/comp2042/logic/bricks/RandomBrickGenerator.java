@@ -1,5 +1,8 @@
 package com.comp2042.logic.bricks;
 
+import com.comp2042.controller.MenuController;
+import com.comp2042.model.GameLevel;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +13,7 @@ public class RandomBrickGenerator implements BrickGenerator {
 
     private final Deque<Brick> nextBricks = new ArrayDeque<>();
     private final List<Brick> currentBag = new ArrayList<>();
+    private int powerUpProgress = 0;
 
     public RandomBrickGenerator() {
         fillBag();
@@ -39,6 +43,10 @@ public class RandomBrickGenerator implements BrickGenerator {
 
     @Override
     public Brick getBrick() {
+        if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_C_OBSTACLES && powerUpProgress >= 5) {
+            powerUpProgress = 0;
+            return new Bomb();
+        }
         ensureQueueHasEnoughBricks(1);
         return nextBricks.poll();
     }
@@ -60,5 +68,17 @@ public class RandomBrickGenerator implements BrickGenerator {
             i++;
         }
         return result;
+    }
+
+    public void incrementPowerUpProgress(int linesCleared) {
+        powerUpProgress += linesCleared;
+    }
+
+    public int getPowerUpProgress() {
+        return powerUpProgress;
+    }
+
+    public void resetPowerUpProgress() {
+        powerUpProgress = 0;
     }
 }

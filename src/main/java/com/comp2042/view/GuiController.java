@@ -5,9 +5,7 @@ import com.comp2042.logic.events.ClearRow;
 import com.comp2042.logic.events.EventSource;
 import com.comp2042.logic.events.EventType;
 import com.comp2042.logic.events.MoveEvent;
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -17,26 +15,31 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.*;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
@@ -83,6 +86,12 @@ public class GuiController implements Initializable {
 
     @FXML
     private Label speedNotificationLabel;
+
+    @FXML
+    private ProgressBar powerUpProgressBar;
+
+    @FXML
+    private VBox powerUpContainer;
 
     private Rectangle[][] displayMatrix;
 
@@ -263,6 +272,10 @@ public class GuiController implements Initializable {
                 break;
             case 7:
                 returnPaint = Color.BURLYWOOD;
+                break;
+            case 8:
+                returnPaint = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE,
+                        new Stop(0, Color.ORANGE), new Stop(1, Color.DARKRED));
                 break;
             default:
                 returnPaint = Color.WHITE;
@@ -502,6 +515,97 @@ public class GuiController implements Initializable {
             ft.setToValue(0.0);
             ft.setOnFinished(event -> speedNotificationLabel.setVisible(false));
             ft.play();
+        }
+    }
+
+    public void spawnFireEffect(double x, double y) {
+        Point2D offset = getGamePanelOffset();
+        double cellWidth = BRICK_SIZE + gamePanel.getHgap();
+        double cellHeight = BRICK_SIZE + gamePanel.getVgap();
+        double sceneX = offset.getX() + x * cellWidth + cellWidth / 2;
+        double sceneY = offset.getY() + (y - 2) * cellHeight + cellHeight / 2;
+
+        Random random = new Random();
+        Color[] fireColors = {Color.RED, Color.ORANGE, Color.YELLOW};
+
+        for (int i = 0; i < 30; i++) {
+            Circle particle = new Circle(random.nextInt(5) + 2, fireColors[random.nextInt(fireColors.length)]);
+            particle.setCenterX(sceneX);
+            particle.setCenterY(sceneY);
+            notificationPane.getChildren().add(particle);
+
+            double angle = random.nextDouble() * 2 * Math.PI;
+            double distance = 40 + random.nextDouble() * 40;
+
+            TranslateTransition tt = new TranslateTransition(Duration.millis(600 + random.nextInt(400)), particle);
+            tt.setToX(sceneX + Math.cos(angle) * distance - sceneX);
+            tt.setToY(sceneY + Math.sin(angle) * distance - sceneY);
+
+            ScaleTransition st = new ScaleTransition(Duration.millis(tt.getDuration().toMillis()), particle);
+            st.setToX(0);
+            st.setToY(0);
+
+            FadeTransition ft = new FadeTransition(Duration.millis(tt.getDuration().toMillis()), particle);
+            ft.setToValue(0);
+
+            ParallelTransition pt = new ParallelTransition(particle, tt, st, ft);
+            pt.setOnFinished(e -> notificationPane.getChildren().remove(particle));
+            pt.play();
+        }
+    }
+
+    public void animateBlockRemoval(List<Point> clearedBlocks, Runnable onFinished) {
+        if (clearedBlocks.isEmpty()) {
+            onFinished.run();
+            return;
+        }
+
+        List<Animation> animations = new ArrayList<>();
+        for (Point p : clearedBlocks) {
+            if (p.y >= 2 && p.y < displayMatrix.length && p.x >= 0 && p.x < displayMatrix[0].length) {
+                Rectangle rect = displayMatrix[p.y][p.x];
+
+                FadeTransition ft = new FadeTransition(Duration.millis(500), rect);
+                ft.setFromValue(1.0);
+                ft.setToValue(0.0);
+
+                ScaleTransition st = new ScaleTransition(Duration.millis(500), rect);
+                st.setFromX(1.0);
+                st.setFromY(1.0);
+                st.setToX(0.0);
+                st.setToY(0.0);
+
+                ParallelTransition pt = new ParallelTransition(rect, ft, st);
+                animations.add(pt);
+            }
+        }
+
+        ParallelTransition allAnimations = new ParallelTransition(animations.toArray(new Animation[0]));
+        allAnimations.setOnFinished(e -> {
+            // Reset visual state after animation
+            for (Point p : clearedBlocks) {
+                if (p.y >= 2 && p.y < displayMatrix.length && p.x >= 0 && p.x < displayMatrix[0].length) {
+                    Rectangle rect = displayMatrix[p.y][p.x];
+                    rect.setScaleX(1.0);
+                    rect.setScaleY(1.0);
+                    rect.setOpacity(1.0);
+                }
+            }
+            onFinished.run();
+        });
+        allAnimations.play();
+    }
+
+    public void updatePowerUpProgressBar(double progress) {
+        if (powerUpProgressBar != null) {
+            powerUpProgressBar.setProgress(progress);
+        }
+    }
+
+    public void setPowerUpContainerVisibility(boolean isVisible) {
+        if (powerUpContainer != null) {
+            powerUpContainer.setVisible(isVisible);
+            powerUpContainer.setManaged(isVisible);
         }
     }
 }
