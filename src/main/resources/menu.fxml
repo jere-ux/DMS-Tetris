@@ -41,7 +41,7 @@
                 <!-- Main Menu Buttons -->
                 <VBox alignment="CENTER" spacing="20.0">
                     <children>
-                        <Button fx:id="modesButton" mnemonicParsing="false" onAction="#onModes" styleClass="cyber-button, green-btn" text="MODES" />
+                        <Button fx:id="playButton" mnemonicParsing="false" onAction="#onPlay" styleClass="cyber-button, green-btn" text="PLAY" />
                         <Button fx:id="helpBtn" mnemonicParsing="false" onAction="#onHelp" styleClass="cyber-button, red-btn" text="HELP" />
                         <Button fx:id="quitButton" mnemonicParsing="false" onAction="#onQuit" styleClass="cyber-button, red-btn" text="QUIT" />
                     </children>

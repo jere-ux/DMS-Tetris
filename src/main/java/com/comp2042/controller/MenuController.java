@@ -36,7 +36,7 @@ public class MenuController {
     @FXML private VBox mainMenuVBox;
     @FXML private VBox helpPane;
     @FXML private VBox levelSelectionVBox;
-    @FXML private Button modesButton;
+    @FXML private Button playButton;
     @FXML private Button quitButton;
 
     // NEW: Level selection fields
@@ -107,7 +107,7 @@ public class MenuController {
 
     private void spawnTetromino() {
         if (particlePane.getWidth() <= 0) {
-            return;
+            return; // Don't spawn if the pane isn't ready
         }
         Polygon tetromino = createRandomTetromino();
 
@@ -236,7 +236,7 @@ public class MenuController {
     }
 
     @FXML
-    private void onModes(ActionEvent event) {
+    private void onPlay(ActionEvent event) {
         levelSelectionVBox.setVisible(!levelSelectionVBox.isVisible());
     }
 
