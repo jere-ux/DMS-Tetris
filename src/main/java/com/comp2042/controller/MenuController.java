@@ -1,7 +1,6 @@
 package com.comp2042.controller;
 
-import com.comp2042.view.GuiController;
-import com.comp2042.controller.GameController;
+import com.comp2042.model.GameLevel;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -11,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -33,9 +33,16 @@ public class MenuController {
     @FXML private ImageView backgroundImage;
     @FXML private Button helpBtn;
     @FXML private Pane particlePane;
-    @FXML private Button newGameBtn;
     @FXML private VBox mainMenuVBox;
     @FXML private VBox helpPane;
+
+    // NEW: Level selection fields
+    @FXML private Button levelAButton;
+    @FXML private Button levelBButton;
+    @FXML private Button levelCButton;
+    @FXML private Label selectedLevelLabel;
+
+    private static volatile GameLevel.LevelType selectedLevelType = GameLevel.LevelType.TYPE_A_SPEED_CURVE;
 
     private final List<FallingShape> shapes = new ArrayList<>();
     private final Random random = new Random();
@@ -157,8 +164,30 @@ public class MenuController {
         }
     }
 
+    // NEW: Level selection methods
     @FXML
-    public void onNewGame(ActionEvent event) {
+    private void onLevelASelected(ActionEvent event) {
+        selectedLevelType = GameLevel.LevelType.TYPE_A_SPEED_CURVE;
+        onNewGame(event);
+    }
+
+    @FXML
+    private void onLevelBSelected(ActionEvent event) {
+        selectedLevelType = GameLevel.LevelType.TYPE_B_NORMAL;
+        onNewGame(event);
+    }
+
+    @FXML
+    private void onLevelCSelected(ActionEvent event) {
+        selectedLevelType = GameLevel.LevelType.TYPE_C_OBSTACLES;
+        onNewGame(event);
+    }
+
+    public static GameLevel.LevelType getSelectedLevelType() {
+        return selectedLevelType;
+    }
+
+    private void onNewGame(ActionEvent event) {
         stopMenuMusic(); // Stop music before starting game
         try {
             // Load the Game Layout

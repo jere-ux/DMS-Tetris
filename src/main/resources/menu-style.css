@@ -91,3 +91,14 @@
     -fx-font-size: 18px;
     -fx-fill: #f0f0f0;
 }
+
+
+.level-btn {
+    -fx-min-width: 100px;
+    -fx-min-height: 40px;
+    -fx-font-size: 14px;
+}
+
+.level-btn:hover {
+    -fx-background-color: #4CAF50;
+}

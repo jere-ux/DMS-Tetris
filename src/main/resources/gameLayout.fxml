@@ -39,10 +39,9 @@
             </center>
         </BorderPane>
 
-        <Group fx:id="groupNotification" layoutX="122" layoutY="230">
-            <VBox alignment="CENTER">
-            </VBox>
-        </Group>
+        <StackPane fx:id="notificationPane" layoutX="122" layoutY="40" prefWidth="212" prefHeight="443">
+            <Label fx:id="speedNotificationLabel" styleClass="notification-label" text="Speed Up!" visible="false" StackPane.alignment="CENTER"/>
+        </StackPane>
     </Pane>
     <com.comp2042.view.PauseMenuPanel fx:id="pauseMenuPanel"/>
     <com.comp2042.view.GameOverPanel fx:id="gameOverPanel"/>

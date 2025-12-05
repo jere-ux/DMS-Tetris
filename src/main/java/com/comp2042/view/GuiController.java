@@ -5,7 +5,7 @@ import com.comp2042.logic.events.ClearRow;
 import com.comp2042.logic.events.EventSource;
 import com.comp2042.logic.events.EventType;
 import com.comp2042.logic.events.MoveEvent;
-import com.comp2042.view.GameOverPanel;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
@@ -23,6 +23,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -42,7 +43,7 @@ public class GuiController implements Initializable {
     private BorderPane gameBoard;
 
     @FXML
-    private Group groupNotification;
+    private StackPane notificationPane;
 
     @FXML
     private GridPane brickPanel;
@@ -73,6 +74,9 @@ public class GuiController implements Initializable {
 
     @FXML
     private Label highScoreLabel;
+
+    @FXML
+    private Label speedNotificationLabel;
 
     private Rectangle[][] displayMatrix;
 
@@ -130,8 +134,8 @@ public class GuiController implements Initializable {
                         if (clearRow != null) {
                             if (clearRow.getLinesRemoved() > 0) {
                                 NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
-                                groupNotification.getChildren().add(notificationPanel);
-                                notificationPanel.showScore(groupNotification.getChildren());
+                                notificationPane.getChildren().add(notificationPanel);
+                                notificationPanel.showScore(notificationPane.getChildren());
                             }
                             refreshGameBackground(clearRow.getNewMatrix());
                         }
@@ -177,8 +181,6 @@ public class GuiController implements Initializable {
 
         gameBoard.setStyle("-fx-border-color: linear-gradient(#2A5058, #61a2b1); -fx-border-width: 12px; -fx-border-radius: 12px;");
         gamePanel.setGridLinesVisible(true);
-        groupNotification.layoutXProperty().bind(gameBoard.widthProperty().subtract(groupNotification.idProperty().length()).divide(2));
-        groupNotification.layoutYProperty().bind(gameBoard.heightProperty().subtract(groupNotification.idProperty().length()).divide(2));
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -385,8 +387,8 @@ public class GuiController implements Initializable {
             if (clearRow != null) {
                 if (clearRow.getLinesRemoved() > 0) {
                     NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
-                    groupNotification.getChildren().add(notificationPanel);
-                    notificationPanel.showScore(groupNotification.getChildren());
+                    notificationPane.getChildren().add(notificationPanel);
+                    notificationPanel.showScore(notificationPane.getChildren());
                 }
                 refreshGameBackground(clearRow.getNewMatrix());
             }
@@ -443,7 +445,7 @@ public class GuiController implements Initializable {
                 if (pauseMenuPanel != null) {
                     pauseMenuPanel.setVisible(true);
                     pauseMenuPanel.toFront();
-                    groupNotification.toFront();
+                    notificationPane.toFront();
                 }
             }
         }
@@ -460,5 +462,16 @@ public class GuiController implements Initializable {
         }
 
         return new Point2D(gameBoard.getLayoutX() + 12, gameBoard.getLayoutY() + 12);
+    }
+
+    public void showSpeedNotification() {
+        if (speedNotificationLabel != null) {
+            speedNotificationLabel.setVisible(true);
+            FadeTransition ft = new FadeTransition(Duration.millis(2000), speedNotificationLabel);
+            ft.setFromValue(1.0);
+            ft.setToValue(0.0);
+            ft.setOnFinished(event -> speedNotificationLabel.setVisible(false));
+            ft.play();
+        }
     }
 }
