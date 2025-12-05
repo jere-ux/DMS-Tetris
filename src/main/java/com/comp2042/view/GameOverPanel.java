@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 public class GameOverPanel extends BorderPane {
 
     private Button newGameButton;
+    private Button mainMenuButton;
 
     public GameOverPanel() {
         VBox container = new VBox(15);
@@ -21,9 +22,12 @@ public class GameOverPanel extends BorderPane {
         gameOverLabel.getStyleClass().add("gameOverStyle");
 
         newGameButton = new Button("New Game");
-        newGameButton.setStyle("-fx-font-size: 14px; -fx-pref-width: 120px; -fx-pref-height: 35px;");
+        newGameButton.getStyleClass().addAll("cyber-button", "green-btn");
 
-        container.getChildren().addAll(gameOverLabel, newGameButton);
+        mainMenuButton = new Button("Main Menu");
+        mainMenuButton.getStyleClass().addAll("cyber-button", "blue-btn");
+
+        container.getChildren().addAll(gameOverLabel, newGameButton, mainMenuButton);
         setCenter(container);
         BorderPane.setAlignment(container, Pos.CENTER);
     }
@@ -31,6 +35,10 @@ public class GameOverPanel extends BorderPane {
     // Wires button click to handler
     public void setOnNewGameButtonClick(EventHandler<ActionEvent> handler) {
         newGameButton.setOnAction(handler);
+    }
+
+    public void setOnMainMenuButtonClick(EventHandler<ActionEvent> handler) {
+        mainMenuButton.setOnAction(handler);
     }
 
 }

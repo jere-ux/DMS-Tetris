@@ -14,9 +14,13 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
@@ -28,8 +32,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -155,6 +161,8 @@ public class GuiController implements Initializable {
         gameOverPanel.setVisible(false);
 
         gameOverPanel.setOnNewGameButtonClick(e -> newGame(e));
+        gameOverPanel.setOnMainMenuButtonClick(this::returnToMainMenu);
+
 
         // Initialize pause menu panel
         if (pauseMenuPanel != null) {
@@ -429,6 +437,28 @@ public class GuiController implements Initializable {
         timeLine.play();
         isPause.setValue(false);
         isGameOver.setValue(false);
+    }
+
+    private void returnToMainMenu(ActionEvent event) {
+        try {
+            // Load the Main Menu FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/menu.fxml"));
+            Parent root = loader.load();
+
+            // Get the stage from the event source
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            // Create a new scene with the main menu
+            Scene scene = new Scene(root, 800, 600);
+
+            // Set the new scene on the stage
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR: Could not load menu.fxml. Check your resources folder!");
+        }
     }
 
     public void togglePause() {

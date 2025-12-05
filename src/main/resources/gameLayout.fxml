@@ -47,5 +47,6 @@
     <com.comp2042.view.GameOverPanel fx:id="gameOverPanel"/>
     <stylesheets>
         <URL value="@window_style.css"/>
+        <URL value="@menu-style.css"/>
     </stylesheets>
 </StackPane>

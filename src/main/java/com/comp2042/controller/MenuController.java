@@ -35,6 +35,9 @@ public class MenuController {
     @FXML private Pane particlePane;
     @FXML private VBox mainMenuVBox;
     @FXML private VBox helpPane;
+    @FXML private VBox levelSelectionVBox;
+    @FXML private Button modesButton;
+    @FXML private Button quitButton;
 
     // NEW: Level selection fields
     @FXML private Button levelAButton;
@@ -103,6 +106,9 @@ public class MenuController {
     }
 
     private void spawnTetromino() {
+        if (particlePane.getWidth() <= 0) {
+            return;
+        }
         Polygon tetromino = createRandomTetromino();
 
 
@@ -227,6 +233,11 @@ public class MenuController {
     public void onHelpBack(ActionEvent actionEvent) {
         helpPane.setVisible(false);
         mainMenuVBox.setVisible(true);
+    }
+
+    @FXML
+    private void onModes(ActionEvent event) {
+        levelSelectionVBox.setVisible(!levelSelectionVBox.isVisible());
     }
 
     private static class FallingShape {

@@ -23,9 +23,17 @@ public class GameController implements InputEventListener {
 
     public GameController(GuiController c) {
         viewGuiController = c;
+        // Obstacle Mode: Create a pyramid at the start
+        if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_C_OBSTACLES) {
+            board.createPyramidObstacle();
+        }
         board.createNewBrick();
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
+        // Refresh the view to show the pyramid immediately
+        if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_C_OBSTACLES) {
+            viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        }
         viewGuiController.bindScore(board.getScore().scoreProperty());
         viewGuiController.bindHighScore(board.getScore().highScoreProperty());
         lastUpdate = System.nanoTime(); // Initialize timer
@@ -61,6 +69,7 @@ public class GameController implements InputEventListener {
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
                 linesClearedSinceSpeedUp += clearRow.getLinesRemoved();
+                // Speed Curve Mode: Increase speed every 2 lines
                 if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_A_SPEED_CURVE && linesClearedSinceSpeedUp >= 2) {
                     dropInterval *= 0.85; // 15% faster
                     linesClearedSinceSpeedUp = 0;
@@ -117,6 +126,7 @@ public class GameController implements InputEventListener {
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
             linesClearedSinceSpeedUp += clearRow.getLinesRemoved();
+            // Speed Curve Mode: Increase speed every 2 lines
             if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_A_SPEED_CURVE && linesClearedSinceSpeedUp >= 2) {
                 dropInterval *= 0.85;
                 linesClearedSinceSpeedUp = 0;
@@ -135,6 +145,10 @@ public class GameController implements InputEventListener {
     @Override
     public void createNewGame() {
         board.newGame();
+        // Obstacle Mode: Create a pyramid at the start of a new game
+        if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_C_OBSTACLES) {
+            board.createPyramidObstacle();
+        }
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         viewGuiController.refreshBrick(board.getViewData());
         dropInterval = 1_000_000_000;

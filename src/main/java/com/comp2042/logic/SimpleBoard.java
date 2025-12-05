@@ -11,6 +11,7 @@ import com.comp2042.view.ViewData;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SimpleBoard implements Board {
 
@@ -165,5 +166,24 @@ public class SimpleBoard implements Board {
             currentOffset = new Point(4, 0);
         }
         canHold = false;
+    }
+
+    /**
+     * Creates a pyramid-shaped obstacle at the bottom of the board.
+     */
+    @Override
+    public void createPyramidObstacle() {
+        int pyramidHeight = 4;
+        Random random = new Random();
+        for (int i = 0; i < pyramidHeight; i++) {
+            for (int j = 0; j < i * 2 + 1; j++) {
+                int x = (width / 2) - i + j - 1;
+                int y = height - pyramidHeight + i;
+                if (x >= 0 && x < width) {
+                    // Assign a random color (1-7) to each block
+                    currentGameMatrix[y][x] = random.nextInt(7) + 1;
+                }
+            }
+        }
     }
 }

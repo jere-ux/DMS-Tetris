@@ -30,4 +30,6 @@ public interface Board {
     int getGhostYPosition();
 
     void holdBrick();
+
+    void createPyramidObstacle();
 }
