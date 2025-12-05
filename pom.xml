@@ -73,9 +73,6 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
-                            <options>
-                                <option>--add-opens=com.comp2042.dms.tetris/com.comp2042.controller=javafx.fxml</option>
-                            </options>
                         </configuration>
                     </execution>
                 </executions>
