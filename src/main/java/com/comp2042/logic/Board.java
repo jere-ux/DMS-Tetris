@@ -1,4 +1,7 @@
-package com.comp2042;
+package com.comp2042.logic;
+
+import com.comp2042.logic.events.ClearRow;
+import com.comp2042.view.ViewData;
 
 public interface Board {
 

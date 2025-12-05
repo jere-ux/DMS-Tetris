@@ -1,5 +1,11 @@
-package com.comp2042;
+package com.comp2042.view;
 
+import com.comp2042.controller.InputEventListener;
+import com.comp2042.logic.events.ClearRow;
+import com.comp2042.logic.events.EventSource;
+import com.comp2042.logic.events.EventType;
+import com.comp2042.logic.events.MoveEvent;
+import com.comp2042.view.GameOverPanel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
@@ -11,7 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
@@ -80,7 +85,7 @@ public class GuiController implements Initializable {
     private int[][] storedNextBrickData1;
     private int[][] storedNextBrickData2;
     private int[][] storedNextBrickData3;
-    private int[][] storedHoldBrickData;
+
 
     private Timeline timeLine;
 
@@ -97,12 +102,12 @@ public class GuiController implements Initializable {
             @Override
             public void handle(KeyEvent keyEvent) {
 
-                if (keyEvent.getCode() == KeyCode.P && isGameOver.getValue() == Boolean.FALSE) {
+                if (keyEvent.getCode() == KeyCode.P && !isGameOver.getValue()) {
                     togglePause();
                     keyEvent.consume();
                 }
 
-                if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
+                if (!isPause.getValue() && !isGameOver.getValue()) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
                         keyEvent.consume();
@@ -128,6 +133,7 @@ public class GuiController implements Initializable {
                                 groupNotification.getChildren().add(notificationPanel);
                                 notificationPanel.showScore(groupNotification.getChildren());
                             }
+                            refreshGameBackground(clearRow.getNewMatrix());
                         }
                         refreshBrick(downData.getViewData());
                         keyEvent.consume();
@@ -147,9 +153,11 @@ public class GuiController implements Initializable {
         gameOverPanel.setOnNewGameButtonClick(e -> newGame(e));
 
         // Initialize pause menu panel
-        pauseMenuPanel.setVisible(false);
-        pauseMenuPanel.setOnResumeButtonClick(e -> togglePause());
-        pauseMenuPanel.setOnNewGameButtonClick(e -> newGame(e));
+        if (pauseMenuPanel != null) {
+            pauseMenuPanel.setVisible(false);
+            pauseMenuPanel.setOnResumeButtonClick(e -> togglePause());
+            pauseMenuPanel.setOnNewGameButtonClick(e -> newGame(e));
+        }
 
         if (scoreLabel != null) {
             scoreLabel.setText("0");
@@ -167,7 +175,7 @@ public class GuiController implements Initializable {
         }
 
 
-         gameBoard.setStyle("-fx-border-color: linear-gradient(#2A5058, #61a2b1); -fx-border-width: 12px; -fx-border-radius: 12px;");
+        gameBoard.setStyle("-fx-border-color: linear-gradient(#2A5058, #61a2b1); -fx-border-width: 12px; -fx-border-radius: 12px;");
         gamePanel.setGridLinesVisible(true);
         groupNotification.layoutXProperty().bind(gameBoard.widthProperty().subtract(groupNotification.idProperty().length()).divide(2));
         groupNotification.layoutYProperty().bind(gameBoard.heightProperty().subtract(groupNotification.idProperty().length()).divide(2));
@@ -305,7 +313,7 @@ public class GuiController implements Initializable {
                 }
             }
         }
-        storedHoldBrickData = holdBrickData;
+
     }
 
     private void refreshNextBricks(java.util.List<int[][]> nextThreeBricks) {
@@ -322,7 +330,7 @@ public class GuiController implements Initializable {
     }
 
     public void refreshBrick(ViewData brick) {
-        if (isPause.getValue() == Boolean.FALSE) {
+        if (!isPause.getValue()) {
             brickPanel.toFront();
             ghostBrickPanel.toFront();
             refreshNextBricks(brick.getNextThreeBricks());
@@ -371,7 +379,7 @@ public class GuiController implements Initializable {
     }
 
     private void moveDown(MoveEvent event) {
-        if (isPause.getValue() == Boolean.FALSE) {
+        if (!isPause.getValue()){
             DownData downData = eventListener.onDownEvent(event);
             ClearRow clearRow = downData.getClearRow();
             if (clearRow != null) {
@@ -407,7 +415,7 @@ public class GuiController implements Initializable {
         timeLine.stop();
         gameOverPanel.setVisible(true);
         gameOverPanel.toFront();
-        isGameOver.setValue(Boolean.TRUE);
+        isGameOver.setValue(true);
     }
 
     public void newGame(ActionEvent actionEvent) {
@@ -417,21 +425,26 @@ public class GuiController implements Initializable {
         eventListener.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
-        isPause.setValue(Boolean.FALSE);
-        isGameOver.setValue(Boolean.FALSE);
+        isPause.setValue(false);
+        isGameOver.setValue(false);
     }
 
     public void togglePause() {
         if (timeLine != null && !isGameOver.getValue()) {
             if (isPause.getValue()) {
-                isPause.setValue(Boolean.FALSE);
+                isPause.setValue(false);
                 timeLine.play();
-                pauseMenuPanel.setVisible(false);
+                if (pauseMenuPanel != null) {
+                    pauseMenuPanel.setVisible(false);
+                }
             } else {
-                isPause.setValue(Boolean.TRUE);
+                isPause.setValue(true);
                 timeLine.pause();
-                pauseMenuPanel.setVisible(true);
-                pauseMenuPanel.toFront();
+                if (pauseMenuPanel != null) {
+                    pauseMenuPanel.setVisible(true);
+                    pauseMenuPanel.toFront();
+                    groupNotification.toFront();
+                }
             }
         }
         gamePanel.requestFocus();

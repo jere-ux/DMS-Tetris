@@ -1,4 +1,6 @@
-package com.comp2042;
+package com.comp2042.logic;
+
+import com.comp2042.logic.events.ClearRow;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -6,11 +8,12 @@ import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MatrixOperations {
+public final class MatrixOperations {
 
 
-    //We don't want to instantiate this utility class
-    private MatrixOperations(){
+    //Private constructor to prevent instantiation of utility class.
+    private MatrixOperations() {
+        throw new AssertionError("Utility class should not be instantiated");
 
     }
 

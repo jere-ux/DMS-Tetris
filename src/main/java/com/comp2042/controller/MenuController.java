@@ -1,5 +1,7 @@
-package com.comp2042;
+package com.comp2042.controller;
 
+import com.comp2042.view.GuiController;
+import com.comp2042.controller.GameController;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -26,10 +28,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class menuController {
+public class MenuController {
 
-    public ImageView backgroundImage;
-    public Button HelpBtn;
+    @FXML private ImageView backgroundImage;
+    @FXML private Button helpBtn;
     @FXML private Pane particlePane;
     @FXML private Button newGameBtn;
     @FXML private VBox mainMenuVBox;
@@ -164,7 +166,7 @@ public class menuController {
             Parent root = loader.load();
 
             // Initialize the Game Logic
-            GuiController guiController = loader.getController();
+            com.comp2042.view.GuiController guiController = loader.getController();
             new GameController(guiController);
 
             // Switch the Scene
@@ -186,14 +188,6 @@ public class menuController {
         System.exit(0);
     }
 
-    public Button getNewGameBtn() {
-        return newGameBtn;
-    }
-
-    public void setNewGameBtn(Button newGameBtn) {
-        this.newGameBtn = newGameBtn;
-    }
-
     @FXML
     public void onHelp(ActionEvent actionEvent) {
         mainMenuVBox.setVisible(false);
@@ -207,8 +201,8 @@ public class menuController {
     }
 
     private static class FallingShape {
-        Shape shape;
-        double speed;
+        private final Shape shape;
+        private final double speed;
 
         public FallingShape(Shape shape, double speed) {
             this.shape = shape;
