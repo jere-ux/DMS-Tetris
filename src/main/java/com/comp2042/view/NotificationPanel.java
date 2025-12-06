@@ -4,12 +4,11 @@ import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -17,25 +16,29 @@ import javafx.util.Duration;
 public class NotificationPanel extends BorderPane {
 
     public NotificationPanel(String text) {
-        setMinHeight(200);
-        setMinWidth(220);
+        // Constrain size to allow proper centering in the parent StackPane
+        setPrefSize(220, 200);
+        setMaxSize(220, 200);
+        setBackground(Background.EMPTY); // Ensure the panel itself is transparent
+
         final Label score = new Label(text);
         score.getStyleClass().add("bonusStyle");
         final Effect glow = new Glow(0.6);
         score.setEffect(glow);
         score.setTextFill(Color.WHITE);
         setCenter(score);
-
     }
 
     public void showScore(ObservableList<Node> list) {
-        FadeTransition ft = new FadeTransition(Duration.millis(2000), this);
+        // The parent StackPane will center this node. We animate relative to that centered position.
         TranslateTransition tt = new TranslateTransition(Duration.millis(2500), this);
-        tt.setFromY(getLayoutY());
-        tt.setToY(getLayoutY() - 40);
-        ft.setFromValue(1);
-        ft.setToValue(0);
-        ParallelTransition transition = new ParallelTransition(tt, ft);
+        tt.setByY(-40); // Move up by 40px from its starting position
+
+        FadeTransition ft = new FadeTransition(Duration.millis(2000), this);
+        ft.setFromValue(1.0);
+        ft.setToValue(0.0);
+
+        ParallelTransition transition = new ParallelTransition(this, tt, ft);
         transition.setOnFinished(event -> list.remove(this));
         transition.play();
     }

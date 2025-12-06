@@ -1,38 +1,41 @@
 package com.comp2042.logic;
 
+import com.comp2042.model.GameLevel;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Scanner;
+import java.util.Properties;
 
 public class HighScoreManager {
 
-    private static final String HIGH_SCORE_FILE = "highscore.txt";
+    private static final String HIGH_SCORE_FILE = "highscores.properties";
+    private final Properties highScores = new Properties();
 
-    public int loadHighScore() {
-        try {
-            File file = new File(HIGH_SCORE_FILE);
-            if (file.exists()) {
-                Scanner scanner = new Scanner(file);
-                if (scanner.hasNextInt()) {
-                    return scanner.nextInt();
-                }
-                scanner.close();
-            }
-        } catch (FileNotFoundException e) {
-            System.err.println("High score file not found. A new one will be created.");
-        }
-        return 0;
+    public HighScoreManager() {
+        loadHighScores();
     }
 
-    public void saveHighScore(int highScore) {
-        try {
-            FileWriter writer = new FileWriter(HIGH_SCORE_FILE);
-            writer.write(String.valueOf(highScore));
-            writer.close();
+    private void loadHighScores() {
+        try (FileInputStream in = new FileInputStream(HIGH_SCORE_FILE)) {
+            highScores.load(in);
         } catch (IOException e) {
-            System.err.println("Could not save high score to file: " + e.getMessage());
+            // It's okay if the file doesn't exist yet
+        }
+    }
+
+    public int loadHighScore(GameLevel.LevelType levelType) {
+        String score = highScores.getProperty(levelType.name(), "0");
+        return Integer.parseInt(score);
+    }
+
+    public void saveHighScore(GameLevel.LevelType levelType, int score) {
+        highScores.setProperty(levelType.name(), String.valueOf(score));
+        try (FileOutputStream out = new FileOutputStream(HIGH_SCORE_FILE)) {
+            highScores.store(out, "Tetris High Scores");
+        } catch (IOException e) {
+            System.err.println("Could not save high scores to file: " + e.getMessage());
         }
     }
 }

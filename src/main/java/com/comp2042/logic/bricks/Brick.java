@@ -5,4 +5,8 @@ import java.util.List;
 public interface Brick {
 
     List<int[][]> getShapeMatrix();
+
+    default boolean isBomb() {
+        return false;
+    }
 }

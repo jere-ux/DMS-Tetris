@@ -1,93 +1,100 @@
-
 .root {
-    -fx-background-color: #0b0c15;
+    -fx-background-color: #1a1a1a;
 }
-
-
-#titleLabel {
-    -fx-font-family: "Courier New", monospace;
-    -fx-font-weight: bold;
-    -fx-font-size: 80px;
-    -fx-text-fill: transparent;
-    -fx-stroke: #00f0ff;
-    -fx-stroke-width: 2px;
-    /* The Cyberpunk Blue Glow */
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 240, 255, 0.8), 30, 0.5, 0, 0);
-}
-
 
 .cyber-button {
-    -fx-background-color: rgba(0, 0, 0, 0.5);
-    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-border-color: #00ff00;
+    -fx-border-width: 2px;
+    -fx-text-fill: #00ff00;
     -fx-font-family: "Courier New", monospace;
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-padding: 10px 20px;
     -fx-cursor: hand;
-    -fx-padding: 10 40 10 40;
-    -fx-border-width: 3px;
-    -fx-border-radius: 2px;
-    transition: all 0.3s ease;
+    -fx-effect: dropshadow(gaussian, #00ff00, 10, 0.5, 0, 0);
 }
 
-
+.cyber-button:hover {
+    -fx-background-color: #00ff00;
+    -fx-text-fill: #1a1a1a;
+}
 
 .green-btn {
-    -fx-text-fill: #39ff14;
-    -fx-border-color: #39ff14;
+    -fx-border-color: #00ff00;
+    -fx-text-fill: #00ff00;
+    -fx-effect: dropshadow(gaussian, #00ff00, 10, 0.5, 0, 0);
 }
+
 .green-btn:hover {
-    -fx-background-color: rgba(57, 255, 20, 0.2);
-    -fx-effect: dropshadow(three-pass-box, #39ff14, 20, 0.5, 0, 0);
+    -fx-background-color: #00ff00;
+    -fx-text-fill: #1a1a1a;
 }
-
-
-.yellow-btn {
-    -fx-text-fill: #fff01f;
-    -fx-border-color: #fff01f;
-}
-.yellow-btn:hover {
-    -fx-background-color: rgba(255, 240, 31, 0.2);
-    -fx-effect: dropshadow(three-pass-box, #fff01f, 20, 0.5, 0, 0);
-}
-
 
 .red-btn {
-    -fx-text-fill: #ff003c;
-    -fx-border-color: #ff003c;
+    -fx-border-color: #ff0000;
+    -fx-text-fill: #ff0000;
+    -fx-effect: dropshadow(gaussian, #ff0000, 10, 0.5, 0, 0);
 }
+
 .red-btn:hover {
-    -fx-background-color: rgba(255, 0, 60, 0.2);
-    -fx-effect: dropshadow(three-pass-box, #ff003c, 20, 0.5, 0, 0);
+    -fx-background-color: #ff0000;
+    -fx-text-fill: #1a1a1a;
 }
 
 .blue-btn {
-    -fx-text-fill: #00f0ff;
-    -fx-border-color: #00f0ff;
+    -fx-border-color: #00ffff;
+    -fx-text-fill: #00ffff;
+    -fx-effect: dropshadow(gaussian, #00ffff, 10, 0.5, 0, 0);
 }
+
 .blue-btn:hover {
-    -fx-background-color: rgba(0, 240, 255, 0.2);
-    -fx-effect: dropshadow(three-pass-box, #00f0ff, 20, 0.5, 0, 0);
+    -fx-background-color: #00ffff;
+    -fx-text-fill: #1a1a1a;
 }
 
 .help-pane {
-    -fx-background-color: rgba(0, 0, 0, 0.7);
-    -fx-padding: 25;
-    -fx-border-color: #00f0ff;
-    -fx-border-width: 1;
-    -fx-border-radius: 3;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 240, 255, 0.6), 15, 0.5, 0, 0);
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-border-color: #00ffff;
+    -fx-border-width: 2px;
+    -fx-padding: 20px;
 }
 
 .help-title {
-    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 24px;
+    -fx-text-fill: #00ffff;
     -fx-font-weight: bold;
-    -fx-font-size: 36px;
-    -fx-text-fill: #00f0ff;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 240, 255, 0.7), 10, 0.5, 0, 0);
 }
 
 .help-text {
-    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 16px;
+    -fx-fill: #00ff00;
+}
+
+.leaderboard-pane {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-border-color: #00ffff;
+    -fx-border-width: 2px;
+    -fx-padding: 20px;
+}
+
+.leaderboard-title {
+    -fx-font-size: 24px;
+    -fx-text-fill: #00ffff;
+    -fx-font-weight: bold;
+}
+
+.leaderboard-scores {
     -fx-font-size: 18px;
-    -fx-fill: #f0f0f0;
+    -fx-text-fill: #00ff00;
+}
+
+.cyber-textfield {
+    -fx-background-color: transparent;
+    -fx-border-color: #00ff00;
+    -fx-border-width: 2px;
+    -fx-text-fill: #00ff00;
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 16px;
+    -fx-padding: 8px;
+    -fx-prompt-text-fill: #808080;
 }

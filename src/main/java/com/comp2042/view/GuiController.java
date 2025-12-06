@@ -1,35 +1,47 @@
 package com.comp2042.view;
 
 import com.comp2042.controller.InputEventListener;
+import com.comp2042.controller.MenuController;
 import com.comp2042.logic.events.ClearRow;
 import com.comp2042.logic.events.EventSource;
 import com.comp2042.logic.events.EventType;
 import com.comp2042.logic.events.MoveEvent;
-import com.comp2042.view.GameOverPanel;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import com.comp2042.model.LeaderboardManager;
+import javafx.animation.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.*;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.awt.Point;
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class GuiController implements Initializable {
@@ -42,7 +54,7 @@ public class GuiController implements Initializable {
     private BorderPane gameBoard;
 
     @FXML
-    private Group groupNotification;
+    private StackPane notificationPane;
 
     @FXML
     private GridPane brickPanel;
@@ -74,6 +86,15 @@ public class GuiController implements Initializable {
     @FXML
     private Label highScoreLabel;
 
+    @FXML
+    private Label speedNotificationLabel;
+
+    @FXML
+    private ProgressBar powerUpProgressBar;
+
+    @FXML
+    private VBox powerUpContainer;
+
     private Rectangle[][] displayMatrix;
 
     private InputEventListener eventListener;
@@ -93,8 +114,11 @@ public class GuiController implements Initializable {
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
+    private LeaderboardManager leaderboardManager;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        leaderboardManager = new LeaderboardManager();
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
@@ -128,11 +152,6 @@ public class GuiController implements Initializable {
                         DownData downData = eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
                         ClearRow clearRow = downData.getClearRow();
                         if (clearRow != null) {
-                            if (clearRow.getLinesRemoved() > 0) {
-                                NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
-                                groupNotification.getChildren().add(notificationPanel);
-                                notificationPanel.showScore(groupNotification.getChildren());
-                            }
                             refreshGameBackground(clearRow.getNewMatrix());
                         }
                         refreshBrick(downData.getViewData());
@@ -151,6 +170,16 @@ public class GuiController implements Initializable {
         gameOverPanel.setVisible(false);
 
         gameOverPanel.setOnNewGameButtonClick(e -> newGame(e));
+        gameOverPanel.setOnMainMenuButtonClick(this::returnToMainMenu);
+        gameOverPanel.setOnSubmitScoreButtonClick(e -> {
+            String playerName = gameOverPanel.getPlayerName();
+            if (playerName != null && !playerName.isEmpty()) {
+                int score = Integer.parseInt(scoreLabel.getText());
+                leaderboardManager.addScore(MenuController.getSelectedLevelType(), playerName, score);
+                returnToMainMenu(e);
+            }
+        });
+
 
         // Initialize pause menu panel
         if (pauseMenuPanel != null) {
@@ -177,8 +206,6 @@ public class GuiController implements Initializable {
 
         gameBoard.setStyle("-fx-border-color: linear-gradient(#2A5058, #61a2b1); -fx-border-width: 12px; -fx-border-radius: 12px;");
         gamePanel.setGridLinesVisible(true);
-        groupNotification.layoutXProperty().bind(gameBoard.widthProperty().subtract(groupNotification.idProperty().length()).divide(2));
-        groupNotification.layoutYProperty().bind(gameBoard.heightProperty().subtract(groupNotification.idProperty().length()).divide(2));
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -253,6 +280,10 @@ public class GuiController implements Initializable {
                 break;
             case 7:
                 returnPaint = Color.BURLYWOOD;
+                break;
+            case 8:
+                returnPaint = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true, CycleMethod.NO_CYCLE,
+                        new Stop(0, Color.ORANGE), new Stop(1, Color.DARKRED));
                 break;
             default:
                 returnPaint = Color.WHITE;
@@ -331,8 +362,8 @@ public class GuiController implements Initializable {
 
     public void refreshBrick(ViewData brick) {
         if (!isPause.getValue()) {
-            brickPanel.toFront();
             ghostBrickPanel.toFront();
+            brickPanel.toFront();
             refreshNextBricks(brick.getNextThreeBricks());
             refreshHoldBrick(brick.getHoldBrickData());
             Point2D offset = getGamePanelOffset();
@@ -383,11 +414,6 @@ public class GuiController implements Initializable {
             DownData downData = eventListener.onDownEvent(event);
             ClearRow clearRow = downData.getClearRow();
             if (clearRow != null) {
-                if (clearRow.getLinesRemoved() > 0) {
-                    NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
-                    groupNotification.getChildren().add(notificationPanel);
-                    notificationPanel.showScore(groupNotification.getChildren());
-                }
                 refreshGameBackground(clearRow.getNewMatrix());
             }
             refreshBrick(downData.getViewData());
@@ -429,6 +455,28 @@ public class GuiController implements Initializable {
         isGameOver.setValue(false);
     }
 
+    private void returnToMainMenu(ActionEvent event) {
+        try {
+            // Load the Main Menu FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/menu.fxml"));
+            Parent root = loader.load();
+
+            // Get the stage from the event source
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            // Create a new scene with the main menu
+            Scene scene = new Scene(root, 800, 600);
+
+            // Set the new scene on the stage
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("ERROR: Could not load menu.fxml. Check your resources folder!");
+        }
+    }
+
     public void togglePause() {
         if (timeLine != null && !isGameOver.getValue()) {
             if (isPause.getValue()) {
@@ -443,7 +491,7 @@ public class GuiController implements Initializable {
                 if (pauseMenuPanel != null) {
                     pauseMenuPanel.setVisible(true);
                     pauseMenuPanel.toFront();
-                    groupNotification.toFront();
+                    notificationPane.toFront();
                 }
             }
         }
@@ -460,5 +508,115 @@ public class GuiController implements Initializable {
         }
 
         return new Point2D(gameBoard.getLayoutX() + 12, gameBoard.getLayoutY() + 12);
+    }
+
+    public void showSpeedNotification(String message) {
+        if (speedNotificationLabel != null) {
+            speedNotificationLabel.setText(message);
+            speedNotificationLabel.setVisible(true);
+            FadeTransition ft = new FadeTransition(Duration.millis(2000), speedNotificationLabel);
+            ft.setFromValue(1.0);
+            ft.setToValue(0.0);
+            ft.setOnFinished(event -> speedNotificationLabel.setVisible(false));
+            ft.play();
+        }
+    }
+
+    public void showScoreNotification(String text) {
+        NotificationPanel notificationPanel = new NotificationPanel(text);
+        notificationPane.getChildren().add(notificationPanel);
+        notificationPane.toFront();
+        notificationPanel.showScore(notificationPane.getChildren());
+    }
+
+    public void spawnFireEffect(double x, double y) {
+        Point2D offset = getGamePanelOffset();
+        double cellWidth = BRICK_SIZE + gamePanel.getHgap();
+        double cellHeight = BRICK_SIZE + gamePanel.getVgap();
+        double sceneX = offset.getX() + x * cellWidth + cellWidth / 2;
+        double sceneY = offset.getY() + (y - 2) * cellHeight + cellHeight / 2;
+
+        Random random = new Random();
+        Color[] fireColors = {Color.RED, Color.ORANGE, Color.YELLOW};
+
+        for (int i = 0; i < 30; i++) {
+            Circle particle = new Circle(random.nextInt(5) + 2, fireColors[random.nextInt(fireColors.length)]);
+            particle.setCenterX(sceneX);
+            particle.setCenterY(sceneY);
+            notificationPane.getChildren().add(particle);
+
+            double angle = random.nextDouble() * 2 * Math.PI;
+            double distance = 40 + random.nextDouble() * 40;
+
+            TranslateTransition tt = new TranslateTransition(Duration.millis(600 + random.nextInt(400)), particle);
+            tt.setToX(sceneX + Math.cos(angle) * distance - sceneX);
+            tt.setToY(sceneY + Math.sin(angle) * distance - sceneY);
+
+            ScaleTransition st = new ScaleTransition(Duration.millis(tt.getDuration().toMillis()), particle);
+            st.setToX(0);
+            st.setToY(0);
+
+            FadeTransition ft = new FadeTransition(Duration.millis(tt.getDuration().toMillis()), particle);
+            ft.setToValue(0);
+
+            ParallelTransition pt = new ParallelTransition(particle, tt, st, ft);
+            pt.setOnFinished(e -> notificationPane.getChildren().remove(particle));
+            pt.play();
+        }
+    }
+
+    public void animateBlockRemoval(List<Point> clearedBlocks, Runnable onFinished) {
+        if (clearedBlocks.isEmpty()) {
+            onFinished.run();
+            return;
+        }
+
+        List<Animation> animations = new ArrayList<>();
+        for (Point p : clearedBlocks) {
+            if (p.y >= 2 && p.y < displayMatrix.length && p.x >= 0 && p.x < displayMatrix[0].length) {
+                Rectangle rect = displayMatrix[p.y][p.x];
+
+                FadeTransition ft = new FadeTransition(Duration.millis(500), rect);
+                ft.setFromValue(1.0);
+                ft.setToValue(0.0);
+
+                ScaleTransition st = new ScaleTransition(Duration.millis(500), rect);
+                st.setFromX(1.0);
+                st.setFromY(1.0);
+                st.setToX(0.0);
+                st.setToY(0.0);
+
+                ParallelTransition pt = new ParallelTransition(rect, ft, st);
+                animations.add(pt);
+            }
+        }
+
+        ParallelTransition allAnimations = new ParallelTransition(animations.toArray(new Animation[0]));
+        allAnimations.setOnFinished(e -> {
+            // Reset visual state after animation
+            for (Point p : clearedBlocks) {
+                if (p.y >= 2 && p.y < displayMatrix.length && p.x >= 0 && p.x < displayMatrix[0].length) {
+                    Rectangle rect = displayMatrix[p.y][p.x];
+                    rect.setScaleX(1.0);
+                    rect.setScaleY(1.0);
+                    rect.setOpacity(1.0);
+                }
+            }
+            onFinished.run();
+        });
+        allAnimations.play();
+    }
+
+    public void updatePowerUpProgressBar(double progress) {
+        if (powerUpProgressBar != null) {
+            powerUpProgressBar.setProgress(progress);
+        }
+    }
+
+    public void setPowerUpContainerVisibility(boolean isVisible) {
+        if (powerUpContainer != null) {
+            powerUpContainer.setVisible(isVisible);
+            powerUpContainer.setManaged(isVisible);
+        }
     }
 }

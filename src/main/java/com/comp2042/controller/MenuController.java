@@ -1,7 +1,8 @@
 package com.comp2042.controller;
 
-import com.comp2042.view.GuiController;
-import com.comp2042.controller.GameController;
+import com.comp2042.model.GameLevel;
+import com.comp2042.model.LeaderboardManager;
+import com.comp2042.model.ScoreEntry;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -11,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -33,13 +35,28 @@ public class MenuController {
     @FXML private ImageView backgroundImage;
     @FXML private Button helpBtn;
     @FXML private Pane particlePane;
-    @FXML private Button newGameBtn;
     @FXML private VBox mainMenuVBox;
     @FXML private VBox helpPane;
+    @FXML private VBox levelSelectionVBox;
+    @FXML private Button playButton;
+    @FXML private Button quitButton;
+    @FXML private Button leaderboardButton;
+    @FXML private VBox leaderboardPane;
+    @FXML private VBox leaderboardScoresVBox;
+
+    // NEW: Level selection fields
+    @FXML private Button levelAButton;
+    @FXML private Button levelBButton;
+    @FXML private Button levelCButton;
+    @FXML private Label selectedLevelLabel;
+
+    private static volatile GameLevel.LevelType selectedLevelType = GameLevel.LevelType.TYPE_A_SPEED_CURVE;
 
     private final List<FallingShape> shapes = new ArrayList<>();
     private final Random random = new Random();
     private MediaPlayer mediaPlayer; // For menu music
+    private LeaderboardManager leaderboardManager;
+
 
     // Cyberpunk Neon Colors
     private final Color[] NEON_COLORS = {
@@ -54,6 +71,8 @@ public class MenuController {
     public void initialize() {
         startBackgroundAnimation();
         playMenuMusic();
+        leaderboardManager = new LeaderboardManager();
+        leaderboardManager.loadScores();
     }
 
     // Plays background music on a loop.
@@ -96,6 +115,9 @@ public class MenuController {
     }
 
     private void spawnTetromino() {
+        if (particlePane.getWidth() <= 0) {
+            return; // Don't spawn if the pane isn't ready
+        }
         Polygon tetromino = createRandomTetromino();
 
 
@@ -157,8 +179,30 @@ public class MenuController {
         }
     }
 
+    // NEW: Level selection methods
     @FXML
-    public void onNewGame(ActionEvent event) {
+    private void onLevelASelected(ActionEvent event) {
+        selectedLevelType = GameLevel.LevelType.TYPE_A_SPEED_CURVE;
+        onNewGame(event);
+    }
+
+    @FXML
+    private void onLevelBSelected(ActionEvent event) {
+        selectedLevelType = GameLevel.LevelType.TYPE_B_NORMAL;
+        onNewGame(event);
+    }
+
+    @FXML
+    private void onLevelCSelected(ActionEvent event) {
+        selectedLevelType = GameLevel.LevelType.TYPE_C_OBSTACLES;
+        onNewGame(event);
+    }
+
+    public static GameLevel.LevelType getSelectedLevelType() {
+        return selectedLevelType;
+    }
+
+    private void onNewGame(ActionEvent event) {
         stopMenuMusic(); // Stop music before starting game
         try {
             // Load the Game Layout
@@ -198,6 +242,54 @@ public class MenuController {
     public void onHelpBack(ActionEvent actionEvent) {
         helpPane.setVisible(false);
         mainMenuVBox.setVisible(true);
+    }
+
+    @FXML
+    private void onPlay(ActionEvent event) {
+        levelSelectionVBox.setVisible(!levelSelectionVBox.isVisible());
+    }
+
+    @FXML
+    private void onLeaderboard(ActionEvent event) {
+        mainMenuVBox.setVisible(false);
+        leaderboardPane.setVisible(true);
+        onLeaderboardModeA(event); // Default to showing mode A scores
+    }
+
+    @FXML
+    private void onLeaderboardBack(ActionEvent event) {
+        leaderboardPane.setVisible(false);
+        mainMenuVBox.setVisible(true);
+    }
+
+    @FXML
+    private void onLeaderboardModeA(ActionEvent event) {
+        updateLeaderboardView(GameLevel.LevelType.TYPE_A_SPEED_CURVE);
+    }
+
+    @FXML
+    private void onLeaderboardModeB(ActionEvent event) {
+        updateLeaderboardView(GameLevel.LevelType.TYPE_B_NORMAL);
+    }
+
+    @FXML
+    private void onLeaderboardModeC(ActionEvent event) {
+        updateLeaderboardView(GameLevel.LevelType.TYPE_C_OBSTACLES);
+    }
+
+    private void updateLeaderboardView(GameLevel.LevelType levelType) {
+        leaderboardScoresVBox.getChildren().clear();
+        List<ScoreEntry> scores = leaderboardManager.getScores(levelType);
+        int rank = 1;
+        for (ScoreEntry score : scores) {
+            if (rank > 5) {
+                break;
+            }
+            Label scoreLabel = new Label(rank + ". " + score.getName() + " - " + score.getScore());
+            scoreLabel.getStyleClass().add("leaderboard-scores");
+            leaderboardScoresVBox.getChildren().add(scoreLabel);
+            rank++;
+        }
     }
 
     private static class FallingShape {
