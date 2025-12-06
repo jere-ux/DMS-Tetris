@@ -1,10 +1,12 @@
 package com.comp2042.view;
 
 import com.comp2042.controller.InputEventListener;
+import com.comp2042.controller.MenuController;
 import com.comp2042.logic.events.ClearRow;
 import com.comp2042.logic.events.EventSource;
 import com.comp2042.logic.events.EventType;
 import com.comp2042.logic.events.MoveEvent;
+import com.comp2042.model.LeaderboardManager;
 import javafx.animation.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -112,8 +114,11 @@ public class GuiController implements Initializable {
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
+    private LeaderboardManager leaderboardManager;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        leaderboardManager = new LeaderboardManager();
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
@@ -147,11 +152,6 @@ public class GuiController implements Initializable {
                         DownData downData = eventListener.onHardDropEvent(new MoveEvent(EventType.HARD_DROP, EventSource.USER));
                         ClearRow clearRow = downData.getClearRow();
                         if (clearRow != null) {
-                            if (clearRow.getLinesRemoved() > 0) {
-                                NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
-                                notificationPane.getChildren().add(notificationPanel);
-                                notificationPanel.showScore(notificationPane.getChildren());
-                            }
                             refreshGameBackground(clearRow.getNewMatrix());
                         }
                         refreshBrick(downData.getViewData());
@@ -171,6 +171,14 @@ public class GuiController implements Initializable {
 
         gameOverPanel.setOnNewGameButtonClick(e -> newGame(e));
         gameOverPanel.setOnMainMenuButtonClick(this::returnToMainMenu);
+        gameOverPanel.setOnSubmitScoreButtonClick(e -> {
+            String playerName = gameOverPanel.getPlayerName();
+            if (playerName != null && !playerName.isEmpty()) {
+                int score = Integer.parseInt(scoreLabel.getText());
+                leaderboardManager.addScore(MenuController.getSelectedLevelType(), playerName, score);
+                returnToMainMenu(e);
+            }
+        });
 
 
         // Initialize pause menu panel
@@ -354,8 +362,8 @@ public class GuiController implements Initializable {
 
     public void refreshBrick(ViewData brick) {
         if (!isPause.getValue()) {
-            brickPanel.toFront();
             ghostBrickPanel.toFront();
+            brickPanel.toFront();
             refreshNextBricks(brick.getNextThreeBricks());
             refreshHoldBrick(brick.getHoldBrickData());
             Point2D offset = getGamePanelOffset();
@@ -406,11 +414,6 @@ public class GuiController implements Initializable {
             DownData downData = eventListener.onDownEvent(event);
             ClearRow clearRow = downData.getClearRow();
             if (clearRow != null) {
-                if (clearRow.getLinesRemoved() > 0) {
-                    NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
-                    notificationPane.getChildren().add(notificationPanel);
-                    notificationPanel.showScore(notificationPane.getChildren());
-                }
                 refreshGameBackground(clearRow.getNewMatrix());
             }
             refreshBrick(downData.getViewData());
@@ -507,8 +510,9 @@ public class GuiController implements Initializable {
         return new Point2D(gameBoard.getLayoutX() + 12, gameBoard.getLayoutY() + 12);
     }
 
-    public void showSpeedNotification() {
+    public void showSpeedNotification(String message) {
         if (speedNotificationLabel != null) {
+            speedNotificationLabel.setText(message);
             speedNotificationLabel.setVisible(true);
             FadeTransition ft = new FadeTransition(Duration.millis(2000), speedNotificationLabel);
             ft.setFromValue(1.0);
@@ -516,6 +520,13 @@ public class GuiController implements Initializable {
             ft.setOnFinished(event -> speedNotificationLabel.setVisible(false));
             ft.play();
         }
+    }
+
+    public void showScoreNotification(String text) {
+        NotificationPanel notificationPanel = new NotificationPanel(text);
+        notificationPane.getChildren().add(notificationPanel);
+        notificationPane.toFront();
+        notificationPanel.showScore(notificationPane.getChildren());
     }
 
     public void spawnFireEffect(double x, double y) {

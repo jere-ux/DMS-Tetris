@@ -1,6 +1,8 @@
 package com.comp2042.controller;
 
 import com.comp2042.model.GameLevel;
+import com.comp2042.model.LeaderboardManager;
+import com.comp2042.model.ScoreEntry;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -38,6 +40,9 @@ public class MenuController {
     @FXML private VBox levelSelectionVBox;
     @FXML private Button playButton;
     @FXML private Button quitButton;
+    @FXML private Button leaderboardButton;
+    @FXML private VBox leaderboardPane;
+    @FXML private VBox leaderboardScoresVBox;
 
     // NEW: Level selection fields
     @FXML private Button levelAButton;
@@ -50,6 +55,8 @@ public class MenuController {
     private final List<FallingShape> shapes = new ArrayList<>();
     private final Random random = new Random();
     private MediaPlayer mediaPlayer; // For menu music
+    private LeaderboardManager leaderboardManager;
+
 
     // Cyberpunk Neon Colors
     private final Color[] NEON_COLORS = {
@@ -64,6 +71,8 @@ public class MenuController {
     public void initialize() {
         startBackgroundAnimation();
         playMenuMusic();
+        leaderboardManager = new LeaderboardManager();
+        leaderboardManager.loadScores();
     }
 
     // Plays background music on a loop.
@@ -238,6 +247,49 @@ public class MenuController {
     @FXML
     private void onPlay(ActionEvent event) {
         levelSelectionVBox.setVisible(!levelSelectionVBox.isVisible());
+    }
+
+    @FXML
+    private void onLeaderboard(ActionEvent event) {
+        mainMenuVBox.setVisible(false);
+        leaderboardPane.setVisible(true);
+        onLeaderboardModeA(event); // Default to showing mode A scores
+    }
+
+    @FXML
+    private void onLeaderboardBack(ActionEvent event) {
+        leaderboardPane.setVisible(false);
+        mainMenuVBox.setVisible(true);
+    }
+
+    @FXML
+    private void onLeaderboardModeA(ActionEvent event) {
+        updateLeaderboardView(GameLevel.LevelType.TYPE_A_SPEED_CURVE);
+    }
+
+    @FXML
+    private void onLeaderboardModeB(ActionEvent event) {
+        updateLeaderboardView(GameLevel.LevelType.TYPE_B_NORMAL);
+    }
+
+    @FXML
+    private void onLeaderboardModeC(ActionEvent event) {
+        updateLeaderboardView(GameLevel.LevelType.TYPE_C_OBSTACLES);
+    }
+
+    private void updateLeaderboardView(GameLevel.LevelType levelType) {
+        leaderboardScoresVBox.getChildren().clear();
+        List<ScoreEntry> scores = leaderboardManager.getScores(levelType);
+        int rank = 1;
+        for (ScoreEntry score : scores) {
+            if (rank > 5) {
+                break;
+            }
+            Label scoreLabel = new Label(rank + ". " + score.getName() + " - " + score.getScore());
+            scoreLabel.getStyleClass().add("leaderboard-scores");
+            leaderboardScoresVBox.getChildren().add(scoreLabel);
+            rank++;
+        }
     }
 
     private static class FallingShape {
