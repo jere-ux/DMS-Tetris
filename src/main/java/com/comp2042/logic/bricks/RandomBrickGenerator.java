@@ -9,17 +9,27 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
+/**
+ * A brick generator that creates a random sequence of bricks using a 7-bag system.
+ * It also manages the logic for power-ups like the bomb.
+ */
 public class RandomBrickGenerator implements BrickGenerator {
 
     private final Deque<Brick> nextBricks = new ArrayDeque<>();
     private final List<Brick> currentBag = new ArrayList<>();
     private int powerUpProgress = 0;
 
+    /**
+     * Constructs a new RandomBrickGenerator.
+     */
     public RandomBrickGenerator() {
         fillBag();
         ensureQueueHasEnoughBricks(2);
     }
-    // 7-bag system: creates a bag with all 7 pieces, shuffles them
+
+    /**
+     * Fills the bag with a new set of 7 shuffled bricks.
+     */
     private void fillBag() {
         currentBag.clear();
         currentBag.add(new IBrick());
@@ -32,6 +42,10 @@ public class RandomBrickGenerator implements BrickGenerator {
         Collections.shuffle(currentBag);
     }
 
+    /**
+     * Ensures that the queue of next bricks has at least a minimum number of bricks.
+     * @param minCount The minimum number of bricks required in the queue.
+     */
     private void ensureQueueHasEnoughBricks(int minCount) {
         while (nextBricks.size() < minCount) {
             if (currentBag.isEmpty()) {
@@ -41,6 +55,10 @@ public class RandomBrickGenerator implements BrickGenerator {
         }
     }
 
+    /**
+     * Gets the next brick from the generator. If a power-up is ready, it returns a bomb.
+     * @return The next brick.
+     */
     @Override
     public Brick getBrick() {
         if (MenuController.getSelectedLevelType() == GameLevel.LevelType.TYPE_C_OBSTACLES && powerUpProgress >= 5) {
@@ -51,12 +69,21 @@ public class RandomBrickGenerator implements BrickGenerator {
         return nextBricks.poll();
     }
 
+    /**
+     * Peeks at the next brick in the sequence without removing it.
+     * @return The next brick.
+     */
     @Override
     public Brick getNextBrick() {
         ensureQueueHasEnoughBricks(1);
         return nextBricks.peek();
     }
 
+    /**
+     * Gets a list of the next bricks in the sequence.
+     * @param count The number of bricks to retrieve.
+     * @return A list of the next bricks.
+     */
     @Override
     public List<Brick> getNextBricks(int count) {
         ensureQueueHasEnoughBricks(count);
@@ -70,14 +97,25 @@ public class RandomBrickGenerator implements BrickGenerator {
         return result;
     }
 
+    /**
+     * Increments the power-up progress.
+     * @param linesCleared The number of lines cleared.
+     */
     public void incrementPowerUpProgress(int linesCleared) {
         powerUpProgress += linesCleared;
     }
 
+    /**
+     * Gets the current power-up progress.
+     * @return The power-up progress.
+     */
     public int getPowerUpProgress() {
         return powerUpProgress;
     }
 
+    /**
+     * Resets the power-up progress to zero.
+     */
     public void resetPowerUpProgress() {
         powerUpProgress = 0;
     }

@@ -15,6 +15,9 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The main controller for the Tetris game. It handles the game logic, user input, and updates the view.
+ */
 public class GameController implements InputEventListener {
 
     private final SimpleBoard board;
@@ -24,6 +27,10 @@ public class GameController implements InputEventListener {
     private double dropInterval = 1_000_000_000; // 1 second in nanoseconds
     private int linesClearedSinceSpeedUp = 0;
 
+    /**
+     * Constructs a new GameController.
+     * @param c The GUI controller.
+     */
     public GameController(GuiController c) {
         viewGuiController = c;
         board = new SimpleBoard(10, 25);
@@ -45,6 +52,9 @@ public class GameController implements InputEventListener {
         startGameLoop();
     }
 
+    /**
+     * Starts the main game loop.
+     */
     private void startGameLoop() {
         gameTimer = new AnimationTimer() {
             @Override
@@ -64,6 +74,11 @@ public class GameController implements InputEventListener {
         gameTimer.start();
     }
 
+    /**
+     * Handles the down movement event.
+     * @param event The move event.
+     * @return The data for updating the view.
+     */
     @Override
     public DownData onDownEvent(MoveEvent event) {
         boolean canMove = board.moveBrickDown();
@@ -107,30 +122,55 @@ public class GameController implements InputEventListener {
         return new DownData(clearRow, board.getViewData());
     }
 
+    /**
+     * Handles the left movement event.
+     * @param event The move event.
+     * @return The data for updating the view.
+     */
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
         board.moveBrickLeft();
         return board.getViewData();
     }
 
+    /**
+     * Handles the right movement event.
+     * @param event The move event.
+     * @return The data for updating the view.
+     */
     @Override
     public ViewData onRightEvent(MoveEvent event) {
         board.moveBrickRight();
         return board.getViewData();
     }
 
+    /**
+     * Handles the rotate event.
+     * @param event The move event.
+     * @return The data for updating the view.
+     */
     @Override
     public ViewData onRotateEvent(MoveEvent event) {
         board.rotateLeftBrick();
         return board.getViewData();
     }
 
+    /**
+     * Handles the hold event.
+     * @param event The move event.
+     * @return The data for updating the view.
+     */
     @Override
     public ViewData onHoldEvent(MoveEvent event) {
         board.holdBrick();
         return board.getViewData();
     }
 
+    /**
+     * Handles the hard drop event.
+     * @param event The move event.
+     * @return The data for updating the view.
+     */
     @Override
     public DownData onHardDropEvent(MoveEvent event) {
         int distance = 0;
@@ -172,6 +212,9 @@ public class GameController implements InputEventListener {
         return new DownData(null, board.getViewData());
     }
 
+    /**
+     * Creates a new game.
+     */
     @Override
     public void createNewGame() {
         board.newGame();
@@ -191,6 +234,10 @@ public class GameController implements InputEventListener {
         gameTimer.start();
     }
 
+    /**
+     * Handles the aftermath of a bomb detonation.
+     * @param destroyedBlocks The number of blocks destroyed by the bomb.
+     */
     private void handleBombAftermath(int destroyedBlocks) {
         board.getScore().add(destroyedBlocks * 50);
         board.handleGravity();
