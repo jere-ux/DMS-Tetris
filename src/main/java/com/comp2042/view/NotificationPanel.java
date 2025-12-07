@@ -13,8 +13,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+/**
+ * Represents a panel for displaying animated notifications, such as score bonuses.
+ */
 public class NotificationPanel extends BorderPane {
 
+    /**
+     * Constructs a new NotificationPanel.
+     *
+     * @param text The text to be displayed in the notification.
+     */
     public NotificationPanel(String text) {
         // Constrain size to allow proper centering in the parent StackPane
         setPrefSize(220, 200);
@@ -29,6 +37,11 @@ public class NotificationPanel extends BorderPane {
         setCenter(score);
     }
 
+    /**
+     * Shows the notification with a fade and translate animation.
+     *
+     * @param list The list of nodes from which this panel should be removed after the animation finishes.
+     */
     public void showScore(ObservableList<Node> list) {
         // The parent StackPane will center this node. We animate relative to that centered position.
         TranslateTransition tt = new TranslateTransition(Duration.millis(2500), this);

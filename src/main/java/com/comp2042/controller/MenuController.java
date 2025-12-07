@@ -30,6 +30,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Controller for the main menu of the game.
+ * Handles menu navigation, background animations, music, and level selection.
+ */
 public class MenuController {
 
     @FXML private ImageView backgroundImage;
@@ -44,7 +48,6 @@ public class MenuController {
     @FXML private VBox leaderboardPane;
     @FXML private VBox leaderboardScoresVBox;
 
-    // NEW: Level selection fields
     @FXML private Button levelAButton;
     @FXML private Button levelBButton;
     @FXML private Button levelCButton;
@@ -67,6 +70,9 @@ public class MenuController {
             Color.web("#b026ff")  // Purple
     };
 
+    /**
+     * Initializes the menu controller.
+     */
     @FXML
     public void initialize() {
         startBackgroundAnimation();
@@ -75,7 +81,9 @@ public class MenuController {
         leaderboardManager.loadScores();
     }
 
-    // Plays background music on a loop.
+    /**
+     * Plays the background music on a loop.
+     */
     private void playMenuMusic() {
         try {
             String musicFile = "/menu.mp3"; // Music file in resources
@@ -89,13 +97,18 @@ public class MenuController {
         }
     }
 
-    // Stops the menu music.
+    /**
+     * Stops the menu music.
+     */
     private void stopMenuMusic() {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
     }
 
+    /**
+     * Starts the background animation of falling tetrominoes.
+     */
     private void startBackgroundAnimation() {
 
         AnimationTimer timer = new AnimationTimer() {
@@ -114,6 +127,9 @@ public class MenuController {
         timer.start();
     }
 
+    /**
+     * Spawns a new random tetromino shape for the background animation.
+     */
     private void spawnTetromino() {
         if (particlePane.getWidth() <= 0) {
             return; // Don't spawn if the pane isn't ready
@@ -141,7 +157,10 @@ public class MenuController {
         shapes.add(new FallingShape(tetromino, 1 + random.nextDouble() * 2));
     }
 
-
+    /**
+     * Creates a random tetromino shape as a Polygon.
+     * @return A Polygon representing a random tetromino.
+     */
     private Polygon createRandomTetromino() {
         int type = random.nextInt(5);
         double s = 30; // Size of one block unit
@@ -161,6 +180,9 @@ public class MenuController {
         };
     }
 
+    /**
+     * Updates the position and rotation of the falling shapes in the background.
+     */
     private void updateShapes() {
         Iterator<FallingShape> iter = shapes.iterator();
         while (iter.hasNext()) {
@@ -179,29 +201,48 @@ public class MenuController {
         }
     }
 
-    // NEW: Level selection methods
+    /**
+     * Handles the selection of level A.
+     * @param event The action event.
+     */
     @FXML
     private void onLevelASelected(ActionEvent event) {
         selectedLevelType = GameLevel.LevelType.TYPE_A_SPEED_CURVE;
         onNewGame(event);
     }
 
+    /**
+     * Handles the selection of level B.
+     * @param event The action event.
+     */
     @FXML
     private void onLevelBSelected(ActionEvent event) {
         selectedLevelType = GameLevel.LevelType.TYPE_B_NORMAL;
         onNewGame(event);
     }
 
+    /**
+     * Handles the selection of level C.
+     * @param event The action event.
+     */
     @FXML
     private void onLevelCSelected(ActionEvent event) {
         selectedLevelType = GameLevel.LevelType.TYPE_C_OBSTACLES;
         onNewGame(event);
     }
 
+    /**
+     * Gets the currently selected game level type.
+     * @return The selected game level type.
+     */
     public static GameLevel.LevelType getSelectedLevelType() {
         return selectedLevelType;
     }
 
+    /**
+     * Starts a new game.
+     * @param event The action event.
+     */
     private void onNewGame(ActionEvent event) {
         stopMenuMusic(); // Stop music before starting game
         try {
@@ -225,6 +266,10 @@ public class MenuController {
         }
     }
 
+    /**
+     * Quits the application.
+     * @param event The action event.
+     */
     @FXML
     public void onQuit(ActionEvent event) {
         stopMenuMusic(); // Stop music before quitting
@@ -232,23 +277,39 @@ public class MenuController {
         System.exit(0);
     }
 
+    /**
+     * Shows the help screen.
+     * @param actionEvent The action event.
+     */
     @FXML
     public void onHelp(ActionEvent actionEvent) {
         mainMenuVBox.setVisible(false);
         helpPane.setVisible(true);
     }
 
+    /**
+     * Returns to the main menu from the help screen.
+     * @param actionEvent The action event.
+     */
     @FXML
     public void onHelpBack(ActionEvent actionEvent) {
         helpPane.setVisible(false);
         mainMenuVBox.setVisible(true);
     }
 
+    /**
+     * Shows the level selection screen.
+     * @param event The action event.
+     */
     @FXML
     private void onPlay(ActionEvent event) {
         levelSelectionVBox.setVisible(!levelSelectionVBox.isVisible());
     }
 
+    /**
+     * Shows the leaderboard screen.
+     * @param event The action event.
+     */
     @FXML
     private void onLeaderboard(ActionEvent event) {
         mainMenuVBox.setVisible(false);
@@ -256,27 +317,47 @@ public class MenuController {
         onLeaderboardModeA(event); // Default to showing mode A scores
     }
 
+    /**
+     * Returns to the main menu from the leaderboard screen.
+     * @param event The action event.
+     */
     @FXML
     private void onLeaderboardBack(ActionEvent event) {
         leaderboardPane.setVisible(false);
         mainMenuVBox.setVisible(true);
     }
 
+    /**
+     * Shows the leaderboard for level A.
+     * @param event The action event.
+     */
     @FXML
     private void onLeaderboardModeA(ActionEvent event) {
         updateLeaderboardView(GameLevel.LevelType.TYPE_A_SPEED_CURVE);
     }
 
+    /**
+     * Shows the leaderboard for level B.
+     * @param event The action event.
+     */
     @FXML
     private void onLeaderboardModeB(ActionEvent event) {
         updateLeaderboardView(GameLevel.LevelType.TYPE_B_NORMAL);
     }
 
+    /**
+     * Shows the leaderboard for level C.
+     * @param event The action event.
+     */
     @FXML
     private void onLeaderboardModeC(ActionEvent event) {
         updateLeaderboardView(GameLevel.LevelType.TYPE_C_OBSTACLES);
     }
 
+    /**
+     * Updates the leaderboard view with scores for the specified level type.
+     * @param levelType The level type to display scores for.
+     */
     private void updateLeaderboardView(GameLevel.LevelType levelType) {
         leaderboardScoresVBox.getChildren().clear();
         List<ScoreEntry> scores = leaderboardManager.getScores(levelType);
@@ -292,6 +373,9 @@ public class MenuController {
         }
     }
 
+    /**
+     * A helper class to represent a falling shape in the background animation.
+     */
     private static class FallingShape {
         private final Shape shape;
         private final double speed;

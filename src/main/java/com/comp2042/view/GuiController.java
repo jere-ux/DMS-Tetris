@@ -44,78 +44,172 @@ import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+/**
+ * Manages the graphical user interface for the Tetris game.
+ * This class handles rendering the game board, bricks, and UI components,
+ * as well as processing user input.
+ */
 public class GuiController implements Initializable {
 
+    /**
+     * The size of each brick in pixels.
+     */
     private static final int BRICK_SIZE = 20;
 
+    /**
+     * The main grid pane that holds the game board.
+     */
     @FXML
     private GridPane gamePanel;
+    /**
+     * The border pane that contains the game board and its border.
+     */
     @FXML
     private BorderPane gameBoard;
 
+    /**
+     * The pane for displaying notifications.
+     */
     @FXML
     private StackPane notificationPane;
 
+    /**
+     * The grid pane for the currently falling brick.
+     */
     @FXML
     private GridPane brickPanel;
 
+    /**
+     * The grid pane for the ghost brick.
+     */
     @FXML
     private GridPane ghostBrickPanel;
 
+    /**
+     * The grid pane for the first next brick.
+     */
     @FXML
     private GridPane nextBrickPanel1;
 
+    /**
+     * The grid pane for the second next brick.
+     */
     @FXML
     private GridPane nextBrickPanel2;
 
+    /**
+     * The grid pane for the third next brick.
+     */
     @FXML
     private GridPane nextBrickPanel3;
 
+    /**
+     * The grid pane for the held brick.
+     */
     @FXML
     private GridPane holdBrickPanel;
 
+    /**
+     * The panel displayed when the game is over.
+     */
     @FXML
     private GameOverPanel gameOverPanel;
 
+    /**
+     * The panel displayed when the game is paused.
+     */
     @FXML
     private PauseMenuPanel pauseMenuPanel;
 
+    /**
+     * The label for displaying the current score.
+     */
     @FXML
     private Label scoreLabel;
 
+    /**
+     * The label for displaying the high score.
+     */
     @FXML
     private Label highScoreLabel;
 
+    /**
+     * The label for displaying speed change notifications.
+     */
     @FXML
     private Label speedNotificationLabel;
 
+    /**
+     * The progress bar for power-ups.
+     */
     @FXML
     private ProgressBar powerUpProgressBar;
 
+    /**
+     * The container for power-up UI elements.
+     */
     @FXML
     private VBox powerUpContainer;
 
+    /**
+     * The matrix of rectangles representing the game board display.
+     */
     private Rectangle[][] displayMatrix;
 
+    /**
+     * The listener for input events.
+     */
     private InputEventListener eventListener;
 
+    /**
+     * The matrix of rectangles for the current brick.
+     */
     private Rectangle[][] rectangles;
 
+    /**
+     * The matrix of rectangles for the ghost brick.
+     */
     private Rectangle[][] ghostRectangles;
 
+    /**
+     * The data for the first next brick.
+     */
     private int[][] storedNextBrickData1;
+    /**
+     * The data for the second next brick.
+     */
     private int[][] storedNextBrickData2;
+    /**
+     * The data for the third next brick.
+     */
     private int[][] storedNextBrickData3;
 
-
+    /**
+     * The timeline for the game loop.
+     */
     private Timeline timeLine;
 
+    /**
+     * A property that indicates whether the game is paused.
+     */
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
+    /**
+     * A property that indicates whether the game is over.
+     */
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
+    /**
+     * The manager for the leaderboard.
+     */
     private LeaderboardManager leaderboardManager;
 
+    /**
+     * Initializes the controller after its root element has been completely processed.
+     * Sets up key handlers, buttons, and initial game state.
+     * @param location The location used to resolve relative paths for the root object, or null if not known.
+     * @param resources The resources used to localize the root object, or null if not known.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         leaderboardManager = new LeaderboardManager();
@@ -208,6 +302,11 @@ public class GuiController implements Initializable {
         gamePanel.setGridLinesVisible(true);
     }
 
+    /**
+     * Sets up the initial game view with the board and the first brick.
+     * @param boardMatrix The initial state of the game board.
+     * @param brick The initial brick to be displayed.
+     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
@@ -254,6 +353,11 @@ public class GuiController implements Initializable {
         timeLine.play();
     }
 
+    /**
+     * Returns the appropriate color for a given brick type.
+     * @param i The integer representing the brick type.
+     * @return The corresponding Paint object.
+     */
     private Paint getFillColor(int i) {
         Paint returnPaint;
         switch (i) {
@@ -292,7 +396,12 @@ public class GuiController implements Initializable {
         return returnPaint;
     }
 
-
+    /**
+     * Refreshes a single panel displaying a next brick.
+     * @param panel The GridPane to update.
+     * @param nextBrickData The data for the brick to display.
+     * @param storedData The previously displayed data, for comparison.
+     */
     private void refreshNextBrickPanel(GridPane panel, int[][] nextBrickData, int[][] storedData) {
         if (panel == null) return;
         if (nextBrickData == null) {
@@ -330,6 +439,10 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Refreshes the panel displaying the held brick.
+     * @param holdBrickData The data for the held brick.
+     */
     private void refreshHoldBrick(int[][] holdBrickData) {
         if (holdBrickPanel == null) return;
         holdBrickPanel.getChildren().clear();
@@ -347,6 +460,10 @@ public class GuiController implements Initializable {
 
     }
 
+    /**
+     * Refreshes the panels displaying the next three bricks.
+     * @param nextThreeBricks A list containing the data for the next three bricks.
+     */
     private void refreshNextBricks(java.util.List<int[][]> nextThreeBricks) {
         if (nextThreeBricks == null || nextThreeBricks.size() < 3) return;
 
@@ -360,6 +477,10 @@ public class GuiController implements Initializable {
         storedNextBrickData3 = nextThreeBricks.get(2);
     }
 
+    /**
+     * Refreshes the position and appearance of the current brick and its ghost.
+     * @param brick The ViewData containing the updated brick information.
+     */
     public void refreshBrick(ViewData brick) {
         if (!isPause.getValue()) {
             ghostBrickPanel.toFront();
@@ -383,6 +504,10 @@ public class GuiController implements Initializable {
     }
 
 
+    /**
+     * Redraws the entire game board based on the provided matrix.
+     * @param board The matrix representing the current state of the board.
+     */
     public void refreshGameBackground(int[][] board) {
         for (int i = 2; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -391,12 +516,22 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Sets the visual properties of a rectangle on the game board.
+     * @param color The color index.
+     * @param rectangle The rectangle to modify.
+     */
     private void setRectangleData(int color, Rectangle rectangle) {
         rectangle.setFill(getFillColor(color));
         rectangle.setArcHeight(9);
         rectangle.setArcWidth(9);
     }
 
+    /**
+     * Sets the visual properties of a ghost rectangle.
+     * @param color The color index.
+     * @param rectangle The rectangle to modify.
+     */
     private void setGhostRectangleData(int color, Rectangle rectangle) {
         if (color == 0) {
             rectangle.setFill(Color.TRANSPARENT);
@@ -409,6 +544,10 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Handles the downward movement of a brick.
+     * @param event The move event.
+     */
     private void moveDown(MoveEvent event) {
         if (!isPause.getValue()){
             DownData downData = eventListener.onDownEvent(event);
@@ -421,22 +560,37 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Sets the listener for user input events.
+     * @param eventListener The listener to be notified of input events.
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
 
+    /**
+     * Binds the score label to an IntegerProperty.
+     * @param scoreProperty The property to bind to the score label.
+     */
     public void bindScore(IntegerProperty scoreProperty) {
         if (scoreLabel != null && scoreProperty != null) {
             scoreLabel.textProperty().bind(scoreProperty.asString("%d"));
         }
     }
 
+    /**
+     * Binds the high score label to an IntegerProperty.
+     * @param highScoreProperty The property to bind to the high score label.
+     */
     public void bindHighScore(IntegerProperty highScoreProperty) {
         if (highScoreLabel != null && highScoreProperty != null) {
             highScoreLabel.textProperty().bind(highScoreProperty.asString("%d"));
         }
     }
 
+    /**
+     * Displays the game over screen.
+     */
     public void gameOver() {
         timeLine.stop();
         gameOverPanel.setVisible(true);
@@ -444,6 +598,10 @@ public class GuiController implements Initializable {
         isGameOver.setValue(true);
     }
 
+    /**
+     * Starts a new game.
+     * @param actionEvent The event that triggered the new game.
+     */
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         gameOverPanel.setVisible(false);
@@ -455,6 +613,10 @@ public class GuiController implements Initializable {
         isGameOver.setValue(false);
     }
 
+    /**
+     * Returns to the main menu.
+     * @param event The event that triggered this action.
+     */
     private void returnToMainMenu(ActionEvent event) {
         try {
             // Load the Main Menu FXML
@@ -477,6 +639,9 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Toggles the pause state of the game.
+     */
     public void togglePause() {
         if (timeLine != null && !isGameOver.getValue()) {
             if (isPause.getValue()) {
@@ -498,10 +663,18 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Pauses the game.
+     * @param actionEvent The event that triggered the pause.
+     */
     public void pauseGame(ActionEvent actionEvent) {
         togglePause();
     }
 
+    /**
+     * Calculates the offset of the game panel within the scene.
+     * @return The Point2D offset.
+     */
     private Point2D getGamePanelOffset() {
         if (gameBoard == null) {
             return Point2D.ZERO;
@@ -510,6 +683,10 @@ public class GuiController implements Initializable {
         return new Point2D(gameBoard.getLayoutX() + 12, gameBoard.getLayoutY() + 12);
     }
 
+    /**
+     * Shows a temporary notification message for speed changes.
+     * @param message The message to display.
+     */
     public void showSpeedNotification(String message) {
         if (speedNotificationLabel != null) {
             speedNotificationLabel.setText(message);
@@ -522,6 +699,10 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Shows a score notification that animates on the screen.
+     * @param text The score text to display.
+     */
     public void showScoreNotification(String text) {
         NotificationPanel notificationPanel = new NotificationPanel(text);
         notificationPane.getChildren().add(notificationPanel);
@@ -529,6 +710,11 @@ public class GuiController implements Initializable {
         notificationPanel.showScore(notificationPane.getChildren());
     }
 
+    /**
+     * Spawns a fire particle effect at a specific grid location.
+     * @param x The x-coordinate on the grid.
+     * @param y The y-coordinate on the grid.
+     */
     public void spawnFireEffect(double x, double y) {
         Point2D offset = getGamePanelOffset();
         double cellWidth = BRICK_SIZE + gamePanel.getHgap();
@@ -565,6 +751,11 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Animates the removal of blocks when a line is cleared.
+     * @param clearedBlocks A list of points representing the blocks to be removed.
+     * @param onFinished A runnable to execute after the animation is complete.
+     */
     public void animateBlockRemoval(List<Point> clearedBlocks, Runnable onFinished) {
         if (clearedBlocks.isEmpty()) {
             onFinished.run();
@@ -607,12 +798,20 @@ public class GuiController implements Initializable {
         allAnimations.play();
     }
 
+    /**
+     * Updates the progress of the power-up progress bar.
+     * @param progress The progress value (0.0 to 1.0).
+     */
     public void updatePowerUpProgressBar(double progress) {
         if (powerUpProgressBar != null) {
             powerUpProgressBar.setProgress(progress);
         }
     }
 
+    /**
+     * Sets the visibility of the power-up UI container.
+     * @param isVisible True to show, false to hide.
+     */
     public void setPowerUpContainerVisibility(boolean isVisible) {
         if (powerUpContainer != null) {
             powerUpContainer.setVisible(isVisible);

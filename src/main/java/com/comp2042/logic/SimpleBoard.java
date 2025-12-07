@@ -13,6 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * A simple implementation of the Tetris game board.
+ * This class manages the game's state, including the position of the current brick,
+ * the game matrix, and the player's score.
+ */
 public class SimpleBoard implements Board {
 
     public static final int BOMB_ID = 8;
@@ -26,6 +31,11 @@ public class SimpleBoard implements Board {
     private Brick heldBrick;
     private boolean canHold = true;
 
+    /**
+     * Constructs a new SimpleBoard.
+     * @param width The width of the board.
+     * @param height The height of the board.
+     */
     public SimpleBoard(int width, int height) {
         this.width = width;
         this.height = height;
@@ -35,6 +45,10 @@ public class SimpleBoard implements Board {
         score = new Score();
     }
 
+    /**
+     * Attempts to move the current brick down.
+     * @return true if successful, false if there is a collision.
+     */
     @Override
     public boolean moveBrickDown() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -50,7 +64,10 @@ public class SimpleBoard implements Board {
         }
     }
 
-
+    /**
+     * Attempts to move the current brick left.
+     * @return true if successful, false if there is a collision.
+     */
     @Override
     public boolean moveBrickLeft() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -65,6 +82,10 @@ public class SimpleBoard implements Board {
         }
     }
 
+    /**
+     * Attempts to move the current brick right.
+     * @return true if successful, false if there is a collision.
+     */
     @Override
     public boolean moveBrickRight() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -79,6 +100,10 @@ public class SimpleBoard implements Board {
         }
     }
 
+    /**
+     * Attempts to rotate the current brick.
+     * @return true if successful, false if there is a collision.
+     */
     @Override
     public boolean rotateLeftBrick() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -92,6 +117,10 @@ public class SimpleBoard implements Board {
         }
     }
 
+    /**
+     * Creates a new brick at the top of the board.
+     * @return true if the new brick overlaps with existing blocks (game over), false otherwise.
+     */
     @Override
     public boolean createNewBrick() {
         Brick currentBrick = brickGenerator.getBrick();
@@ -115,6 +144,9 @@ public class SimpleBoard implements Board {
         return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), nextThreeBricks, getGhostYPosition(), holdBrickData);
     }
 
+    /**
+     * Merges the current brick into the board. If the brick is a bomb, it detonates.
+     */
     @Override
     public void mergeBrickToBackground() {
         if (isCurrentBrickBomb()) {
@@ -138,7 +170,9 @@ public class SimpleBoard implements Board {
         return score;
     }
 
-
+    /**
+     * Resets the board for a new game.
+     */
     @Override
     public void newGame() {
         currentGameMatrix = new int[height][width];
@@ -158,6 +192,9 @@ public class SimpleBoard implements Board {
         return ghostY;
     }
 
+    /**
+     * Holds the current brick or swaps with the held brick.
+     */
     @Override
     public void holdBrick() {
         if (!canHold) {
@@ -194,14 +231,28 @@ public class SimpleBoard implements Board {
         }
     }
 
+    /**
+     * Checks if the current brick is a bomb.
+     * @return true if the current brick is a bomb, false otherwise.
+     */
     public boolean isCurrentBrickBomb() {
         return brickRotator.getBrick().isBomb();
     }
 
+    /**
+     * Gets the position of the current brick.
+     * @return The current brick's position.
+     */
     public Point getBrickPosition() {
         return currentOffset;
     }
 
+    /**
+     * Detonates a bomb at the specified center coordinates, clearing a 3x3 area.
+     * @param centerX The x-coordinate of the bomb's center.
+     * @param centerY The y-coordinate of the bomb's center.
+     * @return A list of points representing the cleared blocks.
+     */
     public List<Point> detonateBomb(int centerX, int centerY) {
         List<Point> clearedBlocks = new ArrayList<>();
         for (int i = -1; i <= 1; i++) {
@@ -220,6 +271,10 @@ public class SimpleBoard implements Board {
         return clearedBlocks;
     }
 
+    /**
+     * Finds the center of the bomb brick.
+     * @return The center point of the bomb.
+     */
     private Point getBombCenter() {
         int[][] shape = brickRotator.getCurrentShape();
         for (int i = 0; i < shape.length; i++) {
@@ -232,6 +287,9 @@ public class SimpleBoard implements Board {
         return currentOffset; // Fallback
     }
 
+    /**
+     * Applies gravity to the board, causing unsupported blocks to fall.
+     */
     @Override
     public void handleGravity() {
         for (int j = 0; j < width; j++) {
@@ -248,6 +306,10 @@ public class SimpleBoard implements Board {
         }
     }
 
+    /**
+     * Gets the brick generator.
+     * @return The brick generator.
+     */
     public RandomBrickGenerator getBrickGenerator() {
         return brickGenerator;
     }
